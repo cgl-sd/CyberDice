@@ -97,7 +97,7 @@
 }
 
 .mode-card {
-  /* 矩形大屏下移 10px；小屏位置在媒体查询中单独覆盖。 */
+  /* 矩形大屏在原位置基础上再下移 10px；小屏会显式取消该位移。 */
   height: 56px;
   flex-direction: row;
   align-items: center;
@@ -107,6 +107,7 @@
   margin: 10px 16px 6px 16px;
   padding: 0 20px;
   flex-shrink: 0;
+  transform: translateY(10px);
 }
 
 .mode-card-label {
@@ -457,6 +458,7 @@
     /* 大幅上移，避开胶囊屏底部圆角及单手拇指难以触达的边缘。 */
     margin: 8px 28px 80px 28px;
     padding: 0 16px;
+    transform: translateY(0px);
   }
 
   .mode-card-label {

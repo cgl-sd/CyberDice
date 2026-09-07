@@ -109,11 +109,13 @@ test('Vela theme contract: 每个主题色使用独立条件节点，不遗留�
   assert.ok(!theme.includes("'background-color:' + $item.color"));
 });
 
-test('Vela large-screen contract: 首页功能卡下移但不影响小屏安全距离', () => {
+test('Vela large-screen contract: 首页功能卡额外下移 10px 但不影响小屏安全距离', () => {
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
   assert.ok(/\.mode-card\s*\{[\s\S]*?margin:\s*10px 16px 6px 16px;/.test(style));
+  assert.ok(/\.mode-card\s*\{[\s\S]*?transform:\s*translateY\(10px\);/.test(style));
   const compact = style.slice(style.indexOf('@media (max-width: 160)'));
   assert.ok(compact.includes('margin: 8px 28px 80px 28px;'));
+  assert.ok(compact.includes('transform: translateY(0px);'));
 });
 
 test('Multi-device contract: 9、9 Pro、10、10 Pro 均有明确尺寸档与体验标识', () => {
