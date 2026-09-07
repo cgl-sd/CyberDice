@@ -1,0 +1,16 @@
+# macOS metadata
+.DS_Store
+
+# Local build outputs
+build/*
+!build/.gitkeep
+dist/*
+!dist/.gitkeep
+
+# Signing materials: retain only the directory placeholder in Git.
+sign/*
+!sign/.gitkeep
+*.pem
+
+# Temporary OS artifacts
+tmp/system/

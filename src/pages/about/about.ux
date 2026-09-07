@@ -1,0 +1,36 @@
+<style src="../../common/styles/style.css"></style>
+
+<template>
+  <div class="page">
+    <div class="topbar">
+      <div class="nav-back" onclick="goBack">
+        <text class="back-glyph">‹</text>
+      </div>
+      <text class="nav-title">关于</text>
+      <text class="clock"> </text>
+    </div>
+
+    <!-- 概念图·关于页面 -->
+    <div class="center-box">
+      <image class="about-glyph" src="/common/images/dice/die-5.png"></image>
+      <text class="about-name">CyberDice</text>
+      <text class="about-version">v{{ version }}</text>
+      <text class="about-tagline">Shake. Roll. Anywhere.</text>
+    </div>
+  </div>
+</template>
+
+<script>
+const router = require('@system.router');
+const C = require('../../common/scripts/constants.js');
+
+export default {
+  data: {
+    version: C.VERSION,
+  },
+
+  goBack() {
+    router.back();
+  },
+};
+</script>

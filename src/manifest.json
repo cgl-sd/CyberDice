@@ -1,0 +1,32 @@
+{
+  "package": "com.vibecoding.cyberdice",
+  "name": "CyberDice",
+  "versionName": "1.1.0",
+  "versionCode": 2,
+  "minPlatformVersion": 1090,
+  "icon": "/common/images/icon.png",
+  "features": [
+    { "name": "system.sensor" },
+    { "name": "system.vibrator" }
+  ],
+  "permissions": [],
+  "config": {
+    "logLevel": "debug"
+  },
+  "display": {
+    "backgroundColor": "#000000",
+    "fullScreen": true
+  },
+  "router": {
+    "entry": "/pages/home",
+    "pages": {
+      "/pages/home": { "component": "home" },
+      "/pages/dice-select": { "component": "dice-select" },
+      "/pages/custom": { "component": "custom" },
+      "/pages/history": { "component": "history" },
+      "/pages/settings": { "component": "settings" },
+      "/pages/theme": { "component": "theme" },
+      "/pages/about": { "component": "about" }
+    }
+  }
+}

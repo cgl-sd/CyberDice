@@ -1,0 +1,384 @@
+/* CyberDice UI 样式 —— 336x480（小米手环 9 Pro），比例校准至 UI 概念图
+ * 基准：顶栏 52 / 列表行 60 / 主字号 24 / 骰子 148 / 结果刻度环 240 */
+
+.page {
+  flex-direction: column;
+  width: 336px;
+  height: 480px;
+  background-color: #000000;
+}
+
+/* ---- 顶栏 ---- */
+.topbar {
+  height: 52px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.app-name {
+  font-size: 24px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.clock {
+  font-size: 20px;
+  color: #9a9ca3;
+}
+
+.nav-back {
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin-left: -10px;
+}
+
+.back-glyph {
+  font-size: 34px;
+  color: #ffffff;
+  margin-top: -4px;
+}
+
+.nav-title {
+  font-size: 24px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.nav-action {
+  font-size: 22px;
+  color: #2f6bed;
+}
+
+/* ---- 首页 ---- */
+.util-row {
+  height: 34px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 20px;
+}
+
+.util-btn {
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 14px;
+}
+
+.util-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.dice-area {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.die-img {
+  width: 148px;
+  height: 148px;
+}
+
+.die-img-shake-l {
+  width: 148px;
+  height: 148px;
+  margin-left: -6px;
+}
+
+.die-img-shake-r {
+  width: 148px;
+  height: 148px;
+  margin-left: 6px;
+}
+
+.result-wrap {
+  width: 240px;
+  height: 240px;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-ticks {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+}
+
+.result-num {
+  font-size: 110px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.result-sub {
+  position: absolute;
+  margin-top: 64px;
+  font-size: 20px;
+  color: #9a9ca3;
+}
+
+.hint {
+  height: 32px;
+  font-size: 20px;
+  color: #9a9ca3;
+  text-align: center;
+}
+
+.mode-card {
+  height: 56px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1c1c21;
+  border-radius: 16px;
+  margin: 10px 16px 16px 16px;
+  padding: 0 20px;
+}
+
+.mode-card-label {
+  font-size: 24px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.mode-card-chevron {
+  font-size: 26px;
+  color: #6f7178;
+}
+
+/* ---- 通用列表页（行高 60，一屏可容纳 5 行以上） ---- */
+.list {
+  flex: 1;
+  padding: 4px 16px 16px 16px;
+}
+
+.list-item {
+  height: 60px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1c1c21;
+  border-radius: 14px;
+  margin-bottom: 10px;
+  padding: 0 20px;
+}
+
+.item-label {
+  font-size: 24px;
+  color: #ffffff;
+}
+
+.item-chevron {
+  font-size: 26px;
+  color: #6f7178;
+}
+
+.check-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  background-color: #2f6bed;
+  align-items: center;
+  justify-content: center;
+}
+
+.check-glyph {
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.check-ring {
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  border-width: 2px;
+  border-color: #4a4a50;
+}
+
+/* ---- 开关（自定义 toggle，68x40） ---- */
+.toggle {
+  width: 68px;
+  height: 40px;
+  border-radius: 20px;
+  flex-direction: row;
+  padding: 3px;
+}
+
+.toggle-on {
+  justify-content: flex-end;
+  background-color: #2f6bed;
+}
+
+.toggle-off {
+  justify-content: flex-start;
+  background-color: #3a3a3e;
+}
+
+.toggle-knob {
+  width: 34px;
+  height: 34px;
+  border-radius: 17px;
+  background-color: #ffffff;
+}
+
+/* ---- 步进器（自定义骰子）：标签在上、控件在下 ---- */
+.stepper-row {
+  flex-direction: column;
+  align-items: center;
+  background-color: #1c1c21;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  padding: 14px 20px;
+}
+
+.stepper-label {
+  font-size: 22px;
+  color: #9a9ca3;
+  margin-bottom: 12px;
+}
+
+.stepper-ctrl {
+  flex-direction: row;
+  align-items: center;
+}
+
+.stepper-btn {
+  width: 64px;
+  height: 56px;
+  border-radius: 12px;
+  background-color: #2a2a30;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepper-btn-glyph {
+  font-size: 32px;
+  color: #ffffff;
+  margin-top: -4px;
+}
+
+.stepper-value {
+  width: 110px;
+  text-align: center;
+  font-size: 32px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.btn-primary {
+  height: 64px;
+  border-radius: 16px;
+  background-color: #2f6bed;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.btn-primary-text {
+  font-size: 26px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.preview-label {
+  text-align: center;
+  font-size: 22px;
+  color: #9a9ca3;
+  margin: 6px 0 16px 0;
+}
+
+/* ---- 历史记录 ---- */
+.history-item {
+  height: 74px;
+  flex-direction: row;
+  align-items: center;
+  background-color: #1c1c21;
+  border-radius: 14px;
+  margin-bottom: 10px;
+  padding: 0 20px;
+}
+
+.history-value {
+  font-size: 34px;
+  color: #ffffff;
+  font-weight: bold;
+  width: 70px;
+}
+
+.history-mid {
+  flex: 1;
+  flex-direction: column;
+}
+
+.history-mode {
+  font-size: 20px;
+  color: #2f6bed;
+}
+
+.history-detail {
+  font-size: 18px;
+  color: #9a9ca3;
+  margin-top: 2px;
+}
+
+.history-time {
+  font-size: 20px;
+  color: #6f7178;
+}
+
+/* ---- 空状态 / 关于 ---- */
+.center-box {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-glyph {
+  width: 96px;
+  height: 96px;
+  margin-bottom: 20px;
+}
+
+.empty-title {
+  font-size: 26px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.empty-sub {
+  font-size: 20px;
+  color: #9a9ca3;
+  margin-top: 8px;
+}
+
+.about-glyph {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 22px;
+}
+
+.about-name {
+  font-size: 34px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.about-version {
+  font-size: 20px;
+  color: #9a9ca3;
+  margin-top: 6px;
+}
+
+.about-tagline {
+  font-size: 20px;
+  color: #9a9ca3;
+  margin-top: 14px;
+}

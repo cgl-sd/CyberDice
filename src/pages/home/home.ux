@@ -1,0 +1,202 @@
+<style src="../../common/styles/style.css"></style>
+
+<template>
+  <div class="page">
+    <!-- 顶栏：应用名 + 时钟（概念图·首页） -->
+    <div class="topbar">
+      <text class="app-name">CyberDice</text>
+      <text class="clock">{{ clock }}</text>
+    </div>
+
+    <!-- 工具入口：历史 / 设置 -->
+    <div class="util-row">
+      <div class="util-btn" onclick="goHistory">
+        <image class="util-icon" src="/common/images/glyph-clock.png"></image>
+      </div>
+      <div class="util-btn" onclick="goSettings">
+        <image class="util-icon" src="/common/images/glyph-gear.png"></image>
+      </div>
+    </div>
+
+    <!-- 主骰子区域：最大点击热区（FR-008） -->
+    <div class="dice-area" onclick="onTapRoll">
+      <block if="{{ rollState === 'RESULT' }}">
+        <div class="result-wrap">
+          <image class="result-ticks" src="/common/images/result-ticks.png"></image>
+          <text class="result-num">{{ resultNum }}</text>
+          <text class="result-sub" show="{{ resultSub !== '' }}">{{ resultSub }}</text>
+        </div>
+      </block>
+      <block if="{{ rollState !== 'RESULT' }}">
+        <image class="{{ jitter ? 'die-img-shake-l' : 'die-img' }}" src="{{ dieSrc }}"></image>
+      </block>
+    </div>
+
+    <text class="hint">{{ hint }}</text>
+
+    <!-- 底部模式卡片 → 选择骰子 -->
+    <div class="mode-card" onclick="goDiceSelect">
+      <text class="mode-card-label">{{ modeLabel }}</text>
+      <text class="mode-card-chevron">›</text>
+    </div>
+  </div>
+</template>
+
+<script>
+const C = require('../../common/scripts/constants.js');
+const diceEngine = require('../../common/scripts/dice-engine.js');
+const sensorAdapterMod = require('../../common/scripts/sensor-adapter.js');
+const router = require('@system.router');
+
+const BLUR_SRC = '/common/images/dice/die-blur.png';
+const dieSrcOf = (v) => '/common/images/dice/die-' + v + '.png';
+
+export default {
+  data: {
+    clock: '',
+    rollState: 'READY',
+    dieSrc: dieSrcOf(5),
+    jitter: false,
+    hint: '摇一摇手腕 或 点击屏幕',
+    modeLabel: '1D6',
+    resultNum: '',
+    resultSub: '',
+  },
+
+  onInit() {
+    this.app = this.$app();
+    this.sensor = sensorAdapterMod.createSensorAdapter();
+    this._animTimer = null;
+    this._clockTimer = null;
+    this._tick = 0;
+    this._unsub = this.app.store.on((what) => {
+      if (what === 'rollState' || what === 'mode' || what === 'settings') {
+        this.syncFromStore();
+      }
+    });
+    this.syncFromStore();
+  },
+
+  onShow() {
+    // 恢复前台：重置 Detector 并重新订阅传感器（第 14 节）
+    this.app.detector.reset();
+    this.sensor.start(
+      (s) => this._onSample(s),
+      (e) => this._onSensorError(e)
+    );
+    this._updateClock();
+    this._clockTimer = setInterval(() => this._updateClock(), 20000);
+    this.syncFromStore();
+  },
+
+  onHide() {
+    // 离开前台：立即取消订阅与动画（FR-009 / NFR-05）；掷骰控制器在 app 层继续
+    this.sensor.stop();
+    this.app.detector.reset();
+    if (this._clockTimer) {
+      clearInterval(this._clockTimer);
+      this._clockTimer = null;
+    }
+    this._stopAnim();
+  },
+
+  onDestroy() {
+    this.sensor.stop();
+    this._stopAnim();
+    if (this._unsub) {
+      this._unsub();
+    }
+  },
+
+  // ---- 交互 ----
+
+  onTapRoll() {
+    this.app.controller.trigger('tap');
+  },
+
+  goDiceSelect() {
+    router.push({ uri: '/pages/dice-select' });
+  },
+  goHistory() {
+    router.push({ uri: '/pages/history' });
+  },
+  goSettings() {
+    router.push({ uri: '/pages/settings' });
+  },
+
+  // ---- 传感器 ----
+
+  _onSample(sample) {
+    const ev = this.app.detector.pushSample(sample);
+    if (ev === 'SHAKE_START') {
+      this.app.controller.onShakeStart();
+    } else if (ev === 'SHAKE_END') {
+      this.app.controller.onShakeEnd();
+    }
+  },
+
+  _onSensorError(err) {
+    console.error('sensor fail: ' + JSON.stringify(err));
+    this.hint = '传感器不可用 · 点击掷骰';
+  },
+
+  // ---- 渲染同步 ----
+
+  syncFromStore() {
+    const st = this.app.store.getState();
+    this.modeLabel = diceEngine.modeLabel(st.mode);
+    this.rollState = st.rollState;
+
+    if (st.rollState === 'RESULT' && st.rollCtx && st.rollCtx.result) {
+      this._stopAnim();
+      const r = st.rollCtx.result;
+      if (r.dice.length === 1) {
+        this.resultNum = String(r.dice[0]);
+        this.resultSub = '';
+      } else {
+        this.resultNum = String(r.total);
+        this.resultSub = r.dice.join(' + ') + ' = ' + r.total;
+      }
+      this.dieSrc = dieSrcOf(r.dice[0]);
+      this.hint = '点击屏幕 或 摇一摇手腕';
+    } else if (st.rollState === 'SHAKING' || st.rollState === 'SETTLING') {
+      this._startAnim();
+      this.hint = '摇动中…';
+    } else {
+      this._stopAnim();
+      this.jitter = false;
+      this.hint = '摇一摇手腕 或 点击屏幕';
+    }
+  },
+
+  _startAnim() {
+    if (this._animTimer) {
+      return;
+    }
+    if (!this.app.store.getState().settings.animation) {
+      return; // 关闭动画效果：保持静态骰面直到结果
+    }
+    const mode = this.app.store.getState().mode;
+    this._animTimer = setInterval(() => {
+      this._tick += 1;
+      this.jitter = this._tick % 2 === 0;
+      // 概念图·摇骰动画：模糊帧与随机帧交替
+      this.dieSrc = this._tick % 3 === 1
+        ? BLUR_SRC
+        : dieSrcOf(diceEngine.rollAnimFace(mode)[0] % 6 + 1);
+    }, C.ANIM_INTERVAL_MS);
+  },
+
+  _stopAnim() {
+    if (this._animTimer) {
+      clearInterval(this._animTimer);
+      this._animTimer = null;
+    }
+  },
+
+  _updateClock() {
+    const d = new Date();
+    this.clock = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  },
+};
+</script>

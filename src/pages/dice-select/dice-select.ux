@@ -1,0 +1,69 @@
+<style src="../../common/styles/style.css"></style>
+
+<template>
+  <div class="page">
+    <div class="topbar">
+      <div class="nav-back" onclick="goBack">
+        <text class="back-glyph">‹</text>
+      </div>
+      <text class="nav-title">选择骰子</text>
+      <text class="clock"> </text>
+    </div>
+
+    <div class="list">
+      <div class="list-item" for="{{ presets }}" onclick="selectPreset($item)">
+        <text class="item-label">{{ $item }}</text>
+        <div class="{{ selectedLabel === $item ? 'check-circle' : 'check-ring' }}">
+          <text class="check-glyph" show="{{ selectedLabel === $item }}">✓</text>
+        </div>
+      </div>
+      <div class="list-item" onclick="goCustom">
+        <text class="item-label">自定义</text>
+        <div class="{{ isCustom ? 'check-circle' : 'check-ring' }}">
+          <text class="check-glyph" show="{{ isCustom }}">✓</text>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+const diceEngine = require('../../common/scripts/dice-engine.js');
+const router = require('@system.router');
+
+export default {
+  data: {
+    presets: ['1D6', '2D6', '3D6', '1D20'],
+    selectedLabel: '1D6',
+    isCustom: false,
+  },
+
+  onInit() {
+    this.app = this.$app();
+  },
+
+  onShow() {
+    this.refresh();
+  },
+
+  refresh() {
+    const mode = this.app.store.getState().mode;
+    this.selectedLabel = typeof mode === 'string' ? mode : '';
+    this.isCustom = typeof mode === 'object';
+  },
+
+  selectPreset(label) {
+    this.app.selectMode(label);
+    this.refresh();
+    router.back();
+  },
+
+  goCustom() {
+    router.push({ uri: '/pages/custom' });
+  },
+
+  goBack() {
+    router.back();
+  },
+};
+</script>

@@ -1,0 +1,85 @@
+# 更新日志（CHANGELOG）
+
+格式参考 Keep a Changelog；版本号遵循语义化版本。
+
+## [Unreleased] - 2026-09-07
+
+### Changed
+
+- 工程目录按发布与源码职责重组：新增根目录 `build/`、`dist/`、`sign/`；运行时图片迁至 `src/common/images/`，JavaScript 模块迁至 `src/common/scripts/`，共享样式迁至 `src/common/styles/`；预留 `src/common/components/` 和 `src/i18n/`。
+- 所有页面、manifest、应用入口、单元测试、模拟器和资产生成器均已更新至新路径；模拟器、生成工具、需求说明、概念图和变更历史归档到 `tmp/`。
+- 重写根目录 README 和 AGENTS 指引，明确发布物、签名材料、离线边界、测试位置与归档规则；不生成或提交伪造的 PEM 签名文件。
+- 新增 Git 忽略规则与构建、发布、签名目录占位文件；构建产物、macOS 元数据和 PEM 签名材料不会进入版本控制。
+
+## [1.1.0] - 2026-09-06
+
+依据用户提供的 UI 概念图完成前端全面重构（图标 / UI / 交互），功能逻辑保持 v1.0 验收基线。
+
+### Added
+
+- 全新视觉：纯黑背景 + 深灰卡片 + 蓝色点缀 + 白色 3D 等距骰子。逐像素光栅化资产生成器 `tools/gen-assets.js`（依赖 `tools/png.js`，`node tools/gen-assets.js` 重新生成）：
+  - `assets/icon.png` 概念图风格应用图标；`assets/dice/die-1..6.png` 六帧 3D 骰子（正等轴投影 + 形态学开运算圆角六面体 + 棱线亮度柔化）；`die-blur.png` 摇动模糊帧；`result-ticks.png` 结果页蓝色刻度线；时钟/齿轮/文档小图形。
+- 多页面导航（`@system.router`）7 屏：首页、选择骰子、自定义骰子、历史记录、设置、主题、关于。
+- 新骰子模式：3D6 预设；自定义骰子（数量 1~6 × 面数 4/6/8/12/20/100）。
+- 历史记录：最近 20 次投掷（值 / 模式 / 加法明细 / 时间），持久化存储，空状态引导，一键清空。
+- 设置页：震动反馈、动画效果开关（即时生效并持久化）；主题页三种强调色（科技蓝 / 极客绿 / 赛博紫）。
+- 关于页：骰子图形 + CyberDice + 版本 + 「Shake. Roll. Anywhere.」。
+- `common/store.js`：跨页面共享状态（设置/模式/历史/掷骰状态广播）+ 持久化；`common/storage-adapter.js`：`@system.storage` 封装（不可用时内存兜底）。
+- 掷骰控制器提升到 app 层（`app.ux`），页面导航不中断掷骰流程；结果自动写入历史。
+- 单元测试扩充至 32 个用例：新增 3D6 / 自定义 / normalizeMode 边界 / store 持久化行为。
+
+### Changed
+
+- 首页交互重构：顶栏（应用名 + 时钟）+ 历史/设置入口图标；骰子区域点击/摇腕掷骰不变；底部模式卡片进入选择骰子页；结果页改为大数字 + 蓝色刻度线（多骰显示总和与加法明细）。
+- 摇骰动画改为模糊帧 / 随机帧交替 + 左右抖动，"动画效果"关闭时直接显示结果。
+- manifest：新增 7 个路由页面，版本升至 1.1.0（versionCode 2），背景色纯黑。
+- 全部尺寸比例按概念图校准（顶栏 52 / 列表行 60 / 主字号 24 / 骰子 148 / 结果刻度环 240）；修正骰子小尺寸下"压扁六边形"观感（圆角六面体 + 棱线柔化渲染）。
+
+### Fixed
+
+- `storage-adapter` 误把 `@system.storage.get` 的回传值当 `{value}` 包装，导致读取恒为 null 的真机隐患。
+- 模拟器浏览器版存储签名与适配器不一致，造成所有持久化写入集中在坏键、重载后设置/历史丢失。
+- 自定义骰子页步进行标签挤压竖排（改为标签在上、控件在下）。
+
+## [1.0.0] - 2026-09-06
+
+首个功能完整版本，对应说明书 v1.0 实施基线。
+
+### Added
+
+- 小米手环 9 Pro（336×480）Vela JS 快应用工程：`src/manifest.json`（声明 `system.sensor` / `system.vibrator` 能力）、`app.ux`、主掷骰页面 `pages/index/index.ux`。
+- 1D6 / 2D6 / 1D20 三种模式，点击底部按钮切换；摇动过程中禁止切换（说明书 7.3 节）。
+- 核心逻辑模块（`src/common/`，平台无关、可注入时间与定时器便于测试）：
+  - `dice-engine.js`：随机结果生成；2D6 独立双骰，非 2~12 直接抽样。
+  - `shake-detector.js`：自适应基线 EMA + 峰值窗口摇动识别（SHAKE_START / SHAKE_END）。
+  - `roll-controller.js`：READY→SHAKING→SETTLING→RESULT 状态机，防重入、结果冷却、最短动画时长。
+  - `sensor-adapter.js`：`@system.sensor` 封装，幂等订阅、失败回调、game 频率。
+  - `feedback-service.js`：`@system.vibrator` 封装，结果锁定短震一次、异常吞掉。
+  - `constants.js`：阈值与时长常量（真机调参入口）。
+- 页面生命周期管理：onHide/onDestroy 取消传感器订阅与动画定时器，onShow 重置 Detector 并重订阅。
+- 传感器不可用时点击兜底，异常不阻塞 UI（FR-010）。
+- 单元测试 28 个用例（`tmp/test/`，无第三方依赖，`node tmp/test/run.js`）：DiceEngine 范围/分布、ShakeDetector 静止/抬腕/步行不触发与单次触发、dt=0 样本、10 万样本吞吐冒烟、RollController 状态机/防重入/冷却/中途销毁、Lifecycle 订阅幂等。
+- 浏览器模拟器（`sim/`，336×480）：通过 CommonJS shim 复用 `src/common` 真实逻辑；mock 传感器 20ms 持续回流，支持注入摇腕/步行/抬腕波形、传感器故障、onHide→onShow 生命周期与诊断日志。
+- 应用图标 `src/assets/icon.png`（`tools/gen-icon.js` 生成）。
+- 文档：README、CHANGELOG、AGENTS.md。
+
+### Verified
+
+- 单元测试 28/28 通过。
+- 模拟器实测 11 项场景全部通过：三模式点击掷骰、摇腕链路单次触发、步行/抬腕零误触、冷却防重入、传感器故障降级、生命周期恢复、100 次连续掷骰压测。
+- 深度验证：状态机 2000 次连续长跑（结果:震动 = 2000:2000、零卡死、平均 77.8ms/次）；ShakeDetector 单样本 0.03µs；3 分钟混合信号浸泡（21 次注入、7 次摇腕全部命中、步行/抬腕零误触、堆内存 4.6→4.8MB 无增长、全程零 JS 错误）。
+
+### Fixed
+
+- 模拟器模块 shim 键名不一致导致初始化中断（`require('./constants.js')` 解析失败）。
+- 模拟器信号流在手势结束后停流，与真机持续回流不符导致 SHAKE_END 无法产生；改为常开信号流 + 波形叠加。
+- 模拟器波形幅度三轴均分导致模长缩为 m/√3，制造人为误触发；修正为 m/√3。
+- SensorAdapter 平台同步失败时订阅标志被覆盖为已订阅的问题。
+
+### Changed
+
+- 应用更名：Wrist Dice → 赛博dice → **CyberDice**；manifest 应用名与包名（`com.vibecoding.wristdice` → `com.vibecoding.cyberdice`）、模拟器、文档同步更新。项目目录由 `WristDice/` 更名为 `CyberDice/`。
+
+### 说明
+
+- 真机项（9 Pro 安装渠道、真机阈值标定、FMP 实测、release RPK 签名）待具备测试设备后执行，测试组见说明书 16.3 节。

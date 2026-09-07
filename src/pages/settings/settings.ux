@@ -1,0 +1,86 @@
+<style src="../../common/styles/style.css"></style>
+
+<template>
+  <div class="page">
+    <div class="topbar">
+      <div class="nav-back" onclick="goBack">
+        <text class="back-glyph">‹</text>
+      </div>
+      <text class="nav-title">设置</text>
+      <text class="clock"> </text>
+    </div>
+
+    <div class="list">
+      <!-- 震动反馈 -->
+      <div class="list-item">
+        <text class="item-label">震动反馈</text>
+        <div class="toggle {{ settings.vibration ? 'toggle-on' : 'toggle-off' }}" onclick="toggleVibration">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+      <!-- 动画效果 -->
+      <div class="list-item">
+        <text class="item-label">动画效果</text>
+        <div class="toggle {{ settings.animation ? 'toggle-on' : 'toggle-off' }}" onclick="toggleAnimation">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+      <!-- 主题 -->
+      <div class="list-item" onclick="goTheme">
+        <text class="item-label">主题</text>
+        <text class="item-chevron">›</text>
+      </div>
+      <!-- 关于 -->
+      <div class="list-item" onclick="goAbout">
+        <text class="item-label">关于</text>
+        <text class="item-chevron">›</text>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+const router = require('@system.router');
+
+export default {
+  data: {
+    settings: { vibration: true, animation: true, accent: 'blue' },
+  },
+
+  onInit() {
+    this.app = this.$app();
+    this._unsub = this.app.store.on((what) => {
+      if (what === 'settings' || what === 'load') {
+        this.settings = Object.assign({}, this.app.store.getState().settings);
+      }
+    });
+  },
+
+  onShow() {
+    this.settings = Object.assign({}, this.app.store.getState().settings);
+  },
+
+  onDestroy() {
+    if (this._unsub) {
+      this._unsub();
+    }
+  },
+
+  toggleVibration() {
+    this.app.store.setSetting('vibration', !this.settings.vibration);
+  },
+  toggleAnimation() {
+    this.app.store.setSetting('animation', !this.settings.animation);
+  },
+
+  goTheme() {
+    router.push({ uri: '/pages/theme' });
+  },
+  goAbout() {
+    router.push({ uri: '/pages/about' });
+  },
+  goBack() {
+    router.back();
+  },
+};
+</script>

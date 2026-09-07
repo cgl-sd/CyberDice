@@ -1,0 +1,111 @@
+<style src="../../common/styles/style.css"></style>
+
+<template>
+  <div class="page">
+    <div class="topbar">
+      <div class="nav-back" onclick="goBack">
+        <text class="back-glyph">‹</text>
+      </div>
+      <text class="nav-title">自定义骰子</text>
+      <text class="clock"> </text>
+    </div>
+
+    <div class="list">
+      <div class="stepper-row">
+        <text class="stepper-label">骰子数量</text>
+        <div class="stepper-ctrl">
+          <div class="stepper-btn" onclick="decCount">
+            <text class="stepper-btn-glyph">−</text>
+          </div>
+          <text class="stepper-value">{{ count }}</text>
+          <div class="stepper-btn" onclick="incCount">
+            <text class="stepper-btn-glyph">＋</text>
+          </div>
+        </div>
+      </div>
+
+      <div class="stepper-row">
+        <text class="stepper-label">骰子面数</text>
+        <div class="stepper-ctrl">
+          <div class="stepper-btn" onclick="prevSides">
+            <text class="stepper-btn-glyph">−</text>
+          </div>
+          <text class="stepper-value">D{{ sides }}</text>
+          <div class="stepper-btn" onclick="nextSides">
+            <text class="stepper-btn-glyph">＋</text>
+          </div>
+        </div>
+      </div>
+
+      <text class="preview-label">当前模式：{{ preview }}</text>
+
+      <div class="btn-primary" onclick="confirm">
+        <text class="btn-primary-text">使用这个骰子</text>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+const router = require('@system.router');
+
+const SIDE_OPTIONS = [4, 6, 8, 12, 20, 100];
+
+export default {
+  data: {
+    count: 2,
+    sides: 6,
+    sideIndex: 1,
+    preview: '2D6',
+  },
+
+  onInit() {
+    this.app = this.$app();
+    // 已是自定义模式时回显
+    const mode = this.app.store.getState().mode;
+    if (mode && typeof mode === 'object') {
+      this.count = mode.count;
+      const i = SIDE_OPTIONS.indexOf(mode.sides);
+      this.sideIndex = i >= 0 ? i : 1;
+      this.sides = SIDE_OPTIONS[this.sideIndex];
+      this._syncPreview();
+    }
+  },
+
+  _syncPreview() {
+    this.preview = this.count + 'D' + this.sides;
+  },
+
+  decCount() {
+    if (this.count > 1) {
+      this.count -= 1;
+      this._syncPreview();
+    }
+  },
+  incCount() {
+    if (this.count < 6) {
+      this.count += 1;
+      this._syncPreview();
+    }
+  },
+  prevSides() {
+    this.sideIndex = (this.sideIndex + SIDE_OPTIONS.length - 1) % SIDE_OPTIONS.length;
+    this.sides = SIDE_OPTIONS[this.sideIndex];
+    this._syncPreview();
+  },
+  nextSides() {
+    this.sideIndex = (this.sideIndex + 1) % SIDE_OPTIONS.length;
+    this.sides = SIDE_OPTIONS[this.sideIndex];
+    this._syncPreview();
+  },
+
+  confirm() {
+    this.app.selectMode({ count: this.count, sides: this.sides });
+    router.back();
+  },
+
+  goBack() {
+    router.back();
+  },
+};
+</script>

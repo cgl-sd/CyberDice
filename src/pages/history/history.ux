@@ -1,0 +1,81 @@
+<style src="../../common/styles/style.css"></style>
+
+<template>
+  <div class="page">
+    <div class="topbar">
+      <div class="nav-back" onclick="goBack">
+        <text class="back-glyph">‹</text>
+      </div>
+      <text class="nav-title">历史记录</text>
+      <text class="nav-action" show="{{ items.length > 0 }}" onclick="clearAll">清空</text>
+      <text class="clock" show="{{ items.length === 0 }}"> </text>
+    </div>
+
+    <!-- 空状态（概念图·空状态） -->
+    <div class="center-box" show="{{ items.length === 0 }}">
+      <image class="empty-glyph" src="/common/images/glyph-doc.png"></image>
+      <text class="empty-title">暂无记录</text>
+      <text class="empty-sub">开始你的第一次投掷吧</text>
+    </div>
+
+    <!-- 记录列表（概念图·历史记录） -->
+    <div class="list" show="{{ items.length > 0 }}">
+      <div class="history-item" for="{{ items }}">
+        <text class="history-value">{{ $item.total }}</text>
+        <div class="history-mid">
+          <text class="history-mode">{{ $item.label }}</text>
+          <text class="history-detail" show="{{ $item.detail !== '' }}">{{ $item.detail }}</text>
+        </div>
+        <text class="history-time">{{ $item.time }}</text>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+const router = require('@system.router');
+
+export default {
+  data: {
+    items: [],
+  },
+
+  onInit() {
+    this.app = this.$app();
+    this._unsub = this.app.store.on((what) => {
+      if (what === 'history' || what === 'load') {
+        this.refresh();
+      }
+    });
+  },
+
+  onShow() {
+    this.refresh();
+  },
+
+  onDestroy() {
+    if (this._unsub) {
+      this._unsub();
+    }
+  },
+
+  refresh() {
+    this.items = this.app.store.getState().history.map(function (h) {
+      return {
+        total: h.total,
+        label: h.label,
+        detail: h.dice.length > 1 ? h.dice.join('+') + '=' + h.total : '',
+        time: h.time,
+      };
+    });
+  },
+
+  clearAll() {
+    this.app.store.clearHistory();
+  },
+
+  goBack() {
+    router.back();
+  },
+};
+</script>

@@ -1,0 +1,66 @@
+<style src="../../common/styles/style.css"></style>
+
+<template>
+  <div class="page">
+    <div class="topbar">
+      <div class="nav-back" onclick="goBack">
+        <text class="back-glyph">‹</text>
+      </div>
+      <text class="nav-title">主题</text>
+      <text class="clock"> </text>
+    </div>
+
+    <div class="list">
+      <div class="list-item" for="{{ options }}" onclick="pick($item.key)">
+        <text class="item-label">{{ $item.name }}</text>
+        <div class="{{ settings.accent === $item.key ? 'check-circle' : 'check-ring' }}"
+             style="{{ settings.accent === $item.key ? 'background-color:' + $item.color : '' }}">
+          <text class="check-glyph" show="{{ settings.accent === $item.key }}">✓</text>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+const router = require('@system.router');
+const storeMod = require('../../common/scripts/store.js');
+
+export default {
+  data: {
+    options: [
+      { key: 'blue', name: '科技蓝', color: '#2f6bed' },
+      { key: 'green', name: '极客绿', color: '#2fbf6b' },
+      { key: 'purple', name: '赛博紫', color: '#8a5cf6' },
+    ],
+    settings: { vibration: true, animation: true, accent: 'blue' },
+  },
+
+  onInit() {
+    this.app = this.$app();
+    this._unsub = this.app.store.on((what) => {
+      if (what === 'settings' || what === 'load') {
+        this.settings = Object.assign({}, this.app.store.getState().settings);
+      }
+    });
+  },
+
+  onShow() {
+    this.settings = Object.assign({}, this.app.store.getState().settings);
+  },
+
+  onDestroy() {
+    if (this._unsub) {
+      this._unsub();
+    }
+  },
+
+  pick(key) {
+    this.app.store.setSetting('accent', key);
+  },
+
+  goBack() {
+    router.back();
+  },
+};
+</script>

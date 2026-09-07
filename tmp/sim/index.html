@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>CyberDice 模拟器（336×480）</title>
+<style>
+  :root { --accent: #2f6bed; }
+  body { background: #23262f; font-family: -apple-system, "PingFang SC", sans-serif; color: #ddd; margin: 0; padding: 24px; display: flex; gap: 32px; }
+  .device { width: 336px; height: 480px; background: #000; border: 10px solid #000; border-radius: 24px; overflow: hidden; flex-shrink: 0; user-select: none; position: relative; }
+  .panel { max-width: 420px; font-size: 13px; line-height: 1.6; }
+  .panel h2 { font-size: 15px; margin: 12px 0 6px; color: #7ea8ff; }
+  button { background: #2b4bd7; color: #fff; border: 0; border-radius: 6px; padding: 6px 12px; margin: 2px; cursor: pointer; font-size: 13px; }
+  button.warn { background: #a34; }
+  #log { height: 170px; overflow-y: auto; background: #171a26; border-radius: 6px; padding: 6px 8px; font-family: Menlo, monospace; font-size: 11px; white-space: pre-wrap; }
+
+  /* ===== 复刻 .ux 页面（336×480；比例校准：顶栏52/行60/主字24/骰子148/刻度环240） ===== */
+  .screen { position: absolute; inset: 0; display: none; flex-direction: column; background: #000; }
+  .screen.active { display: flex; }
+
+  .topbar { height: 52px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
+  .app-name { font-size: 24px; color: #fff; font-weight: bold; }
+  .clock { font-size: 20px; color: #9a9ca3; }
+  .nav-back { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; margin-left: -10px; cursor: pointer; }
+  .back-glyph { font-size: 34px; color: #fff; margin-top: -4px; }
+  .nav-title { font-size: 24px; color: #fff; font-weight: bold; flex: 1; }
+  .nav-action { font-size: 22px; color: var(--accent); cursor: pointer; }
+
+  .util-row { height: 34px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0 20px; flex-shrink: 0; }
+  .util-btn { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; margin-left: 14px; cursor: pointer; }
+  .util-icon { width: 20px; height: 20px; }
+
+  .dice-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; }
+  .die-img { width: 148px; height: 148px; }
+  .die-shake-l { width: 148px; height: 148px; margin-left: -6px; }
+  .die-shake-r { width: 148px; height: 148px; margin-left: 6px; }
+  .result-wrap { width: 240px; height: 240px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .result-ticks { position: absolute; width: 240px; height: 240px; left: 0; top: 0; }
+  .result-num { font-size: 110px; color: #fff; font-weight: bold; }
+  .result-sub { position: absolute; margin-top: 64px; font-size: 20px; color: #9a9ca3; }
+
+  .hint { height: 32px; font-size: 20px; color: #9a9ca3; text-align: center; flex-shrink: 0; }
+  .mode-card { height: 56px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; background: #1c1c21; border-radius: 16px; margin: 10px 16px 16px 16px; padding: 0 20px; cursor: pointer; flex-shrink: 0; }
+  .mode-card-label { font-size: 24px; color: #fff; font-weight: bold; }
+  .mode-card-chevron { font-size: 26px; color: #6f7178; }
+
+  .list { flex: 1; padding: 4px 16px 16px 16px; overflow-y: auto; }
+  .list-item { height: 60px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; background: #1c1c21; border-radius: 14px; margin-bottom: 10px; padding: 0 20px; cursor: pointer; flex-shrink: 0; box-sizing: border-box; }
+  .item-label { font-size: 24px; color: #fff; }
+  .item-chevron { font-size: 26px; color: #6f7178; }
+  .check-circle { width: 28px; height: 28px; border-radius: 14px; background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .check-glyph { font-size: 18px; color: #fff; }
+  .check-ring { width: 28px; height: 28px; border-radius: 14px; border: 2px solid #4a4a50; box-sizing: border-box; flex-shrink: 0; }
+
+  .toggle { width: 68px; height: 40px; border-radius: 20px; display: flex; flex-direction: row; padding: 3px; box-sizing: border-box; cursor: pointer; flex-shrink: 0; }
+  .toggle.on { justify-content: flex-end; background: var(--accent); }
+  .toggle.off { justify-content: flex-start; background: #3a3a3e; }
+  .toggle-knob { width: 34px; height: 34px; border-radius: 17px; background: #fff; }
+
+  .stepper-row { display: flex; flex-direction: column; align-items: center; background: #1c1c21; border-radius: 14px; margin-bottom: 14px; padding: 14px 20px; flex-shrink: 0; box-sizing: border-box; }
+  .stepper-label { font-size: 22px; color: #9a9ca3; margin-bottom: 12px; }
+  .stepper-ctrl { display: flex; flex-direction: row; align-items: center; }
+  .stepper-btn { width: 64px; height: 56px; border-radius: 12px; background: #2a2a30; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .stepper-btn-glyph { font-size: 32px; color: #fff; margin-top: -4px; }
+  .stepper-value { width: 110px; text-align: center; font-size: 32px; color: #fff; font-weight: bold; }
+  .btn-primary { height: 64px; border-radius: 16px; background: var(--accent); display: flex; align-items: center; justify-content: center; margin-top: 6px; cursor: pointer; flex-shrink: 0; }
+  .btn-primary-text { font-size: 26px; color: #fff; font-weight: bold; }
+  .preview-label { text-align: center; font-size: 22px; color: #9a9ca3; margin: 6px 0 16px 0; }
+
+  .history-item { height: 74px; display: flex; flex-direction: row; align-items: center; background: #1c1c21; border-radius: 14px; margin-bottom: 10px; padding: 0 20px; flex-shrink: 0; box-sizing: border-box; }
+  .history-value { font-size: 34px; color: #fff; font-weight: bold; width: 70px; }
+  .history-mid { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .history-mode { font-size: 20px; color: var(--accent); }
+  .history-detail { font-size: 18px; color: #9a9ca3; margin-top: 2px; white-space: nowrap; }
+  .history-time { font-size: 20px; color: #6f7178; }
+
+  .center-box { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .empty-glyph { width: 96px; height: 96px; margin-bottom: 20px; }
+  .empty-title { font-size: 26px; color: #fff; font-weight: bold; }
+  .empty-sub { font-size: 20px; color: #9a9ca3; margin-top: 8px; }
+  .about-glyph { width: 120px; height: 120px; margin-bottom: 22px; }
+  .about-name { font-size: 34px; color: #fff; font-weight: bold; }
+  .about-version { font-size: 20px; color: #9a9ca3; margin-top: 6px; }
+  .about-tagline { font-size: 20px; color: #9a9ca3; margin-top: 14px; }
+</style>
+</head>
+<body>
+  <div class="device" id="device">
+
+    <!-- 首页 -->
+    <div class="screen active" id="scr-home">
+      <div class="topbar"><span class="app-name">CyberDice</span><span class="clock" id="clock"></span></div>
+      <div class="util-row">
+        <div class="util-btn" data-nav="history"><img class="util-icon" src="/src/common/images/glyph-clock.png"></div>
+        <div class="util-btn" data-nav="settings"><img class="util-icon" src="/src/common/images/glyph-gear.png"></div>
+      </div>
+      <div class="dice-area" id="diceArea">
+        <div class="result-wrap" id="resultWrap" style="display:none">
+          <img class="result-ticks" src="/src/common/images/result-ticks.png">
+          <div class="result-num" id="resultNum"></div>
+          <div class="result-sub" id="resultSub"></div>
+        </div>
+        <img class="die-img" id="dieImg" src="/src/common/images/dice/die-5.png">
+      </div>
+      <div class="hint" id="hint">摇一摇手腕 或 点击屏幕</div>
+      <div class="mode-card" id="modeCard">
+        <span class="mode-card-label" id="modeLabel">1D6</span>
+        <span class="mode-card-chevron">›</span>
+      </div>
+    </div>
+
+    <!-- 选择骰子 -->
+    <div class="screen" id="scr-dice-select">
+      <div class="topbar">
+        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
+        <span class="nav-title">选择骰子</span><span class="clock">&nbsp;</span>
+      </div>
+      <div class="list" id="presetList"></div>
+    </div>
+
+    <!-- 自定义骰子 -->
+    <div class="screen" id="scr-custom">
+      <div class="topbar">
+        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
+        <span class="nav-title">自定义骰子</span><span class="clock">&nbsp;</span>
+      </div>
+      <div class="list">
+        <div class="stepper-row">
+          <span class="stepper-label">骰子数量</span>
+          <div class="stepper-ctrl">
+            <div class="stepper-btn" id="cntDec"><span class="stepper-btn-glyph">−</span></div>
+            <span class="stepper-value" id="cntVal">2</span>
+            <div class="stepper-btn" id="cntInc"><span class="stepper-btn-glyph">＋</span></div>
+          </div>
+        </div>
+        <div class="stepper-row">
+          <span class="stepper-label">骰子面数</span>
+          <div class="stepper-ctrl">
+            <div class="stepper-btn" id="sideDec"><span class="stepper-btn-glyph">−</span></div>
+            <span class="stepper-value" id="sideVal">D6</span>
+            <div class="stepper-btn" id="sideInc"><span class="stepper-btn-glyph">＋</span></div>
+          </div>
+        </div>
+        <div class="preview-label" id="customPreview">当前模式：2D6</div>
+        <div class="btn-primary" id="customConfirm"><span class="btn-primary-text">使用这个骰子</span></div>
+      </div>
+    </div>
+
+    <!-- 历史记录 -->
+    <div class="screen" id="scr-history">
+      <div class="topbar">
+        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
+        <span class="nav-title">历史记录</span>
+        <span class="nav-action" id="clearHistory" style="display:none">清空</span>
+        <span class="clock" id="historyClockPad" style="display:none">&nbsp;</span>
+      </div>
+      <div class="center-box" id="historyEmpty" style="display:none">
+        <img class="empty-glyph" src="/src/common/images/glyph-doc.png">
+        <div class="empty-title">暂无记录</div>
+        <div class="empty-sub">开始你的第一次投掷吧</div>
+      </div>
+      <div class="list" id="historyList"></div>
+    </div>
+
+    <!-- 设置 -->
+    <div class="screen" id="scr-settings">
+      <div class="topbar">
+        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
+        <span class="nav-title">设置</span><span class="clock">&nbsp;</span>
+      </div>
+      <div class="list">
+        <div class="list-item">
+          <span class="item-label">震动反馈</span>
+          <div class="toggle" id="tglVibration"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="list-item">
+          <span class="item-label">动画效果</span>
+          <div class="toggle" id="tglAnimation"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="list-item" data-nav="theme">
+          <span class="item-label">主题</span><span class="item-chevron">›</span>
+        </div>
+        <div class="list-item" data-nav="about">
+          <span class="item-label">关于</span><span class="item-chevron">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主题 -->
+    <div class="screen" id="scr-theme">
+      <div class="topbar">
+        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
+        <span class="nav-title">主题</span><span class="clock">&nbsp;</span>
+      </div>
+      <div class="list" id="themeList"></div>
+    </div>
+
+    <!-- 关于 -->
+    <div class="screen" id="scr-about">
+      <div class="topbar">
+        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
+        <span class="nav-title">关于</span><span class="clock">&nbsp;</span>
+      </div>
+      <div class="center-box">
+        <img class="about-glyph" src="/src/common/images/dice/die-5.png">
+        <div class="about-name">CyberDice</div>
+        <div class="about-version" id="aboutVersion">v1.1.0</div>
+        <div class="about-tagline">Shake. Roll. Anywhere.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>CyberDice 模拟器</h2>
+    <div>复用 <code>src/common/scripts/*.js</code> 真实逻辑模块，UI 复刻概念图 7 屏。</div>
+    <h2>交互</h2>
+    <div>
+      <button id="btnShake">模拟摇腕掷骰</button>
+      <button id="btnWalk">模拟步行 5 秒（不应触发）</button>
+      <button id="btnLift">模拟抬腕看时间（不应触发）</button>
+    </div>
+    <h2>异常与生命周期</h2>
+    <div>
+      <button id="btnSensorFail" class="warn">注入传感器故障</button>
+      <button id="btnRestart" class="warn">离开前台（ onHide → onShow ）</button>
+    </div>
+    <h2>诊断日志（聚合输出）</h2>
+    <div id="log"></div>
+  </div>
+
+<script src="app.js?v=16"></script>
+</body>
+</html>
