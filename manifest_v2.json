@@ -29,29 +29,29 @@
   ],
   "downloads": {
     "xmb9": {
-      "version": "1.1.0",
-      "file_name": "downloads/com.cyberdice.release.1.1.0.rpk",
-      "versionCode": 2
-    },
-    "xmb9p": {
-      "version": "1.1.0",
-      "file_name": "downloads/com.cyberdice.release.1.1.0.rpk",
-      "versionCode": 2
-    },
-    "xmb10p": {
-      "version": "1.1.0",
-      "file_name": "downloads/com.cyberdice.release.1.1.0.rpk",
-      "versionCode": 2
+      "version": "1.1.1",
+      "file_name": "downloads/com.cyberdice.debug.1.1.1.rpk",
+      "versionCode": 3
     },
     "xmb10nfc": {
-      "version": "1.1.0",
-      "file_name": "downloads/com.cyberdice.release.1.1.0.rpk",
-      "versionCode": 2
+      "version": "1.1.1",
+      "file_name": "downloads/com.cyberdice.debug.1.1.1.rpk",
+      "versionCode": 3
     },
     "xmb10": {
-      "version": "1.1.0",
-      "file_name": "downloads/com.cyberdice.release.1.1.0.rpk",
-      "versionCode": 2
+      "version": "1.1.1",
+      "file_name": "downloads/com.cyberdice.debug.1.1.1.rpk",
+      "versionCode": 3
+    },
+    "xmb10p": {
+      "version": "1.1.1",
+      "file_name": "downloads/com.cyberdice.debug.1.1.1.rpk",
+      "versionCode": 3
+    },
+    "xmb9p": {
+      "version": "1.1.1",
+      "file_name": "downloads/com.cyberdice.debug.1.1.1.rpk",
+      "versionCode": 3
     }
   },
   "ext": {}
