@@ -4,10 +4,11 @@ const path = require('path');
 
 const home = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'home', 'home.ux'), 'utf8');
 
-test('Navigation contract: 手环应用首页仅右滑进入功能入口，左滑和上下滑不绑定应用功能', () => {
+test('Navigation contract: 手环应用首页上滑进入历史、右滑进入功能，左滑仍交给系统', () => {
   assert.ok(home.includes("event.direction === 'right'"));
+  assert.ok(home.includes("event.direction === 'up'"));
+  assert.ok(home.includes("router.push({ uri: '/pages/history' })"));
   assert.ok(!home.includes("event.direction === 'left'"));
-  assert.ok(!home.includes("event.direction === 'up'"));
   assert.ok(!home.includes("event.direction === 'down'"));
 });
 

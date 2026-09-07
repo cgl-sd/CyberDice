@@ -123,9 +123,11 @@ export default {
     if (this.rollState !== C.STATE_READY || !event) {
       return;
     }
-    // 左滑保留给系统退出；上下滑在首页不承载功能。
+    // 左滑仍保留给系统退出；首页上滑直达历史记录，右滑进入功能。
     if (event.direction === 'right') {
       router.push({ uri: '/pages/dice-select' });
+    } else if (event.direction === 'up') {
+      router.push({ uri: '/pages/history' });
     }
   },
 

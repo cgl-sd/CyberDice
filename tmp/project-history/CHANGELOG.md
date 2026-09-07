@@ -6,6 +6,7 @@
 
 ### Changed
 
+- 首页 READY 状态的上滑改为直接进入“历史记录”；右滑仍进入“功能”，左滑继续交由系统执行退出/返回。
 - 功能页的 1D6 / 2D6 / 3D6 / 1D20 改为独立条件选中节点，规避 Vela 列表节点复用使 1D6 选中蓝标滞留的问题；卡片高度由 68px 提升至 76px，入口区域支持纵向滚动。
 
 - 对齐 AIoT-IDE/Vela 工具链的 manifest 路由格式（入口与页面键使用 `pages/...`），保留 Vela 原生 `router.push` 所需的 `/pages/...` URI；补齐已实际使用的 `system.router`、`system.storage` 能力声明。页面共享样式改为 Vela 编译器可解析的 CSS `@import`，使正式源码可由官方构建器编译并部署到模拟器。
