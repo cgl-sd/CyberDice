@@ -26,12 +26,11 @@ CyberDice 已在小米手环 9 Pro 上完成测试。小米手环 9、小米手�
 应用基于 Xiaomi Vela JS 快应用项目开发，可通过 AIoT IDE 调试并安装到 Vela 虚拟设备或已连接设备。当前已完成摇腕/点击投掷、结果反馈、历史记录、玩法选择、自定义骰子与主题设置。
 
 ```bash
-npm test
 npm run build
 npm start
 ```
 
-`npm test` 用于检查核心投掷逻辑，`npm run build` 编译生成调试包，`npm start` 启动调试并部署到 Vela 虚拟设备。
+`npm run build` 编译生成调试包，`npm start` 启动调试并部署到 Vela 虚拟设备。
 
 ## 项目目录
 
@@ -46,7 +45,6 @@ CyberDice/
 │   ├── manifest.json  应用配置
 │   ├── common/        图片、样式和通用逻辑
 │   └── pages/         首页、功能、历史、设置等页面
-├── tmp/               测试、需求资料与变更记录
 ├── build/             本地构建中间文件
 ├── dist/              本地 RPK 构建产物
 └── sign/              本地签名材料

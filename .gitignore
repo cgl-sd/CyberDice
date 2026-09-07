@@ -6,6 +6,7 @@
 node_modules/
 .aiot/
 .vela/
+AGENTS.md
 
 # Local build outputs
 build/
@@ -17,8 +18,8 @@ sign/*
 !sign/.gitkeep
 *.pem
 
-# Temporary OS artifacts
-tmp/system/
+# Local temporary material: tests, requirements, change history and diagnostics
+tmp/
 
 # Logs and AIoT local diagnostics
 *.log
