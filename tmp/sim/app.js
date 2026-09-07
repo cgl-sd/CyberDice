@@ -80,6 +80,11 @@ async function loadModule(url, key) {
 
 // ---- 概念图配色 ----
 const ACCENT_COLORS = { blue: '#2f6bed', green: '#2fbf6b', purple: '#8a5cf6' };
+const DEVICE_PROFILES = {
+  'band-9-pro': { name: '小米手环 9 Pro', size: '336×480', tier: '正式基线' },
+  'band-9': { name: '小米手环 9', size: '192×490', tier: '体验版' },
+  'band-10': { name: '小米手环 10', size: '212×520', tier: '体验版' },
+};
 
 // ---- 简易路由 ----
 const stack = ['home'];
@@ -114,6 +119,13 @@ function log(msg) {
   const line = '[' + ((Date.now() - t0) / 1000).toFixed(1) + 's] ' + msg + '\n';
   box.textContent += line;
   box.scrollTop = box.scrollHeight;
+}
+
+function setDeviceProfile(profileId) {
+  const profile = DEVICE_PROFILES[profileId] || DEVICE_PROFILES['band-9-pro'];
+  el('device').dataset.profile = DEVICE_PROFILES[profileId] ? profileId : 'band-9-pro';
+  el('deviceProfile').value = el('device').dataset.profile;
+  log('体验设备 -> ' + profile.name + '（' + profile.size + '，' + profile.tier + '）');
 }
 
 // ---- 应用级单例（对应 app.ux） ----
@@ -525,6 +537,7 @@ async function main() {
   el('btnSwipeUp').onclick = () => routeSwipe(0, -SWIPE_DISTANCE);
   el('btnSwipeRight').onclick = () => routeSwipe(SWIPE_DISTANCE, 0);
   el('btnSwipeLeft').onclick = () => routeSwipe(-SWIPE_DISTANCE, 0);
+  el('deviceProfile').onchange = (event) => setDeviceProfile(event.target.value);
 
   // 信号注入
   el('btnShake').onclick = () => {

@@ -11,7 +11,8 @@
   ],
   "permissions": [],
   "config": {
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "designWidth": 336
   },
   "display": {
     "backgroundColor": "#000000",

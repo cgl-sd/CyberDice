@@ -1,6 +1,6 @@
 # CyberDice
 
-小米手环 9 Pro（336×480）上的离线摇骰子应用，采用 Vela JS 快应用开发，RPK 包名为 `com.vibecoding.cyberdice`。
+面向小米手环 9 系列与手环 10 的离线摇骰子应用，采用 Vela JS 快应用开发，RPK 包名为 `com.vibecoding.cyberdice`。小米手环 9 Pro（336×480）是正式基线；手环 9（192×490）和手环 10（212×520）提供体验版布局档，待真机验收后提升为正式支持。
 
 ## 目录
 

@@ -1,10 +1,11 @@
-/* CyberDice UI 样式 —— 336x480（小米手环 9 Pro），比例校准至 UI 概念图
- * 基准：顶栏 52 / 列表行 60 / 主字号 24 / 骰子 148 / 结果刻度环 240 */
+/* CyberDice UI 样式 —— 以 336px 宽为设计基准。
+ * Vela 会依据 manifest.config.designWidth 将 px 等比映射到手环 9/9 Pro/10；
+ * 页面本身使用 100% 高度，使胶囊屏额外的纵向空间由 Flex 布局承接。 */
 
 .page {
   flex-direction: column;
-  width: 336px;
-  height: 480px;
+  width: 100%;
+  height: 100%;
   background-color: #000000;
 }
 
@@ -341,4 +342,22 @@
   font-size: 20px;
   color: #9a9ca3;
   margin-top: 14px;
+}
+
+/* 手环 9、10 为胶囊屏：收紧横向边距，避免列表卡片贴近圆角安全区。 */
+@media screen and (shape: pill-shaped) {
+  .topbar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .list {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .mode-card {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
 }

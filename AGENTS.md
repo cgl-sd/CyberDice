@@ -1,6 +1,6 @@
 # AGENTS.md — CyberDice 工作区指引
 
-CyberDice 是小米手环 9 Pro（336×480）的 Vela JS 快应用，包名 `com.vibecoding.cyberdice`，发布物为 RPK。唯一需求基线位于 `tmp/reference/Wrist_Dice_小米手环9Pro_产品需求与程序设计说明书.md`；改动功能、阈值或架构前必须先读它。结构调整和功能变更记入 `tmp/project-history/CHANGELOG.md`。
+CyberDice 是面向小米手环 9、9 Pro、10 的 Vela JS 快应用，包名 `com.vibecoding.cyberdice`，发布物为 RPK。9 Pro（336×480）为正式基线；9（192×490）与 10（212×520）为真机验收前的体验版。唯一需求基线位于 `tmp/reference/Wrist_Dice_小米手环9Pro_产品需求与程序设计说明书.md`；改动功能、阈值或架构前必须先读它。结构调整和功能变更记入 `tmp/project-history/CHANGELOG.md`。
 
 ## 目录职责
 
@@ -16,7 +16,7 @@ CyberDice 是小米手环 9 Pro（336×480）的 Vela JS 快应用，包名 `com
 - 单元测试：`npm test`（测试一律在 `tmp/test/`，用假时钟，禁止真实 sleep）。
 - 模拟器：`npm run sim`，打开 `http://127.0.0.1:8931/tmp/sim/index.html`。改 `tmp/sim/app.js` 后递增 HTML 中的 `app.js?v=N`。
 - 资产生成：`node tmp/tools/gen-assets.js`，输出到 `src/common/images/`。
-- 真机验收不能由模拟器替代；9 Pro 的传感器阈值、RPK 签名和安装流程以需求说明为准。
+- 真机验收不能由模拟器替代；9、9 Pro、10 的传感器阈值、RPK 签名和安装流程以需求说明为准。体验版不能被标记为正式支持。
 
 ## 架构边界
 
@@ -28,5 +28,5 @@ CyberDice 是小米手环 9 Pro（336×480）的 Vela JS 快应用，包名 `com
 
 ## UI 与安全
 
-- 遵循 336×480 单列基线：顶栏 52、列表行 60、主字号 24、骰子 148、结果刻度环 240。最终数值必须直接显示，不能只依赖颜色传达结果。
+- 遵循 336px 设计宽度基线：顶栏 52、列表行 60、主字号 24、骰子 148、结果刻度环 240。manifest 必须保留 `designWidth: 336`；页面根容器使用 100% 宽高，胶囊屏安全边距用媒体查询处理。最终数值必须直接显示，不能只依赖颜色传达结果。
 - 不删除用户内容；归档使用移动到 `tmp/`。不要创建伪造的 PEM 文件，也不要在日志、测试或文档中暴露真实私钥。
