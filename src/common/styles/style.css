@@ -441,7 +441,7 @@
   .mode-card {
     height: 58px;
     /* 大幅上移，避开胶囊屏底部圆角及单手拇指难以触达的边缘。 */
-    margin: 8px 28px 72px 28px;
+    margin: 8px 28px 80px 28px;
     padding: 0 16px;
   }
 

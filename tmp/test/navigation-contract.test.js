@@ -130,7 +130,7 @@ test('Vela responsive contract: 小尺寸手环保留安全区、底部入口和
   const compact = style.slice(style.indexOf('@media (max-width: 160)'));
   assert.ok(compact.includes('justify-content: center;'));
   assert.ok(/\.die-img,[\s\S]*?width:\s*164px;/.test(compact));
-  assert.ok(compact.includes('margin: 8px 28px 72px 28px;'));
+  assert.ok(compact.includes('margin: 8px 28px 80px 28px;'));
   assert.ok(compact.includes('.history-item'));
   assert.ok(compact.includes('height: 76px;'));
 });
