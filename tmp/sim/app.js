@@ -84,6 +84,7 @@ const DEVICE_PROFILES = {
   'band-9-pro': { name: '小米手环 9 Pro', size: '336×480', tier: '正式基线' },
   'band-9': { name: '小米手环 9', size: '192×490', tier: '体验版' },
   'band-10': { name: '小米手环 10', size: '212×520', tier: '体验版' },
+  'band-10-pro': { name: '小米手环 10 Pro', size: '336×480', tier: '体验版' },
 };
 
 // ---- 简易路由 ----

@@ -73,7 +73,7 @@ test('Simulator contract: 本地文件与 HTTP 打开时均使用相对资源和
   assert.ok(sim.includes('window.CyberDiceModules'));
 });
 
-test('Multi-device contract: 9、9 Pro、10 均有明确尺寸档与体验标识', () => {
+test('Multi-device contract: 9、9 Pro、10、10 Pro 均有明确尺寸档与体验标识', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'manifest.json'), 'utf8'));
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
   const simHtml = fs.readFileSync(path.join(__dirname, '..', 'sim', 'index.html'), 'utf8');
@@ -84,6 +84,8 @@ test('Multi-device contract: 9、9 Pro、10 均有明确尺寸档与体验标识
   assert.ok(simHtml.includes('小米手环 9 · 192×490（体验版）'));
   assert.ok(simHtml.includes('小米手环 9 Pro · 336×480（正式基线）'));
   assert.ok(simHtml.includes('小米手环 10 · 212×520（体验版）'));
+  assert.ok(simHtml.includes('小米手环 10 Pro · 336×480（体验版）'));
   assert.ok(sim.includes("'band-9': { name: '小米手环 9', size: '192×490'"));
   assert.ok(sim.includes("'band-10': { name: '小米手环 10', size: '212×520'"));
+  assert.ok(sim.includes("'band-10-pro': { name: '小米手环 10 Pro', size: '336×480'"));
 });

@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>CyberDice 模拟器（手环 9 / 9 Pro / 10）</title>
+<title>CyberDice 模拟器（手环 9 / 9 Pro / 10 / 10 Pro）</title>
 <style>
   :root { --accent: #2f6bed; }
   body { background: #23262f; font-family: -apple-system, "PingFang SC", sans-serif; color: #ddd; margin: 0; padding: 24px; display: flex; gap: 32px; }
@@ -196,13 +196,14 @@
 
   <div class="panel">
     <h2>CyberDice 模拟器</h2>
-    <div>复用 <code>src/common/scripts/*.js</code> 真实逻辑模块，支持手环 9 / 9 Pro / 10 三档预览。</div>
+    <div>复用 <code>src/common/scripts/*.js</code> 真实逻辑模块，支持手环 9 / 9 Pro / 10 / 10 Pro 四档预览。</div>
     <h2>体验设备</h2>
     <label>屏幕档位
       <select id="deviceProfile">
         <option value="band-9-pro">小米手环 9 Pro · 336×480（正式基线）</option>
         <option value="band-9">小米手环 9 · 192×490（体验版）</option>
         <option value="band-10">小米手环 10 · 212×520（体验版）</option>
+        <option value="band-10-pro">小米手环 10 Pro · 336×480（体验版）</option>
       </select>
     </label>
     <h2>交互</h2>
@@ -224,6 +225,6 @@
   </div>
 
 <script src="common-bundle.js?v=1"></script>
-<script src="app.js?v=35"></script>
+<script src="app.js?v=36"></script>
 </body>
 </html>
