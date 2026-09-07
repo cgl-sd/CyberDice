@@ -123,14 +123,14 @@ test('Vela visual parity: 首页骰子舞台与浏览器版一样直接由页面
   assert.ok(/\.list\s*\{[\s\S]*?overflow:\s*scroll;/.test(style));
 });
 
-test('Vela responsive contract: 胶囊屏保留安全区、底部入口和紧凑历史卡片', () => {
+test('Vela responsive contract: 小尺寸手环保留安全区、底部入口和紧凑历史卡片', () => {
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
-  const pill = style.slice(style.indexOf('@media screen and (shape: pill-shaped)'));
-  assert.ok(pill.includes('justify-content: center;'));
-  assert.ok(/\.die-img,[\s\S]*?width:\s*164px;/.test(pill));
-  assert.ok(pill.includes('height: 58px;'));
-  assert.ok(pill.includes('.history-item'));
-  assert.ok(pill.includes('height: 64px;'));
+  const compact = style.slice(style.indexOf('@media (max-width: 160)'));
+  assert.ok(compact.includes('justify-content: center;'));
+  assert.ok(/\.die-img,[\s\S]*?width:\s*164px;/.test(compact));
+  assert.ok(compact.includes('height: 58px;'));
+  assert.ok(compact.includes('.history-item'));
+  assert.ok(compact.includes('height: 64px;'));
 });
 
 test('Simulator contract: 本地文件与 HTTP 打开时均使用相对资源和预打包逻辑', () => {
@@ -149,7 +149,7 @@ test('Multi-device contract: 9、9 Pro、10、10 Pro 均有明确尺寸档与体
   const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
   assert.strictEqual(manifest.config.designWidth, 336);
   assert.ok(style.includes('width: 100%;'));
-  assert.ok(style.includes('@media screen and (shape: pill-shaped)'));
+  assert.ok(style.includes('@media (max-width: 160)'));
   assert.ok(simHtml.includes('id="deviceAutoProfile"'));
   assert.ok(!simHtml.includes('id="deviceProfile"'));
   assert.ok(sim.includes('function detectDeviceProfile(width, height)'));

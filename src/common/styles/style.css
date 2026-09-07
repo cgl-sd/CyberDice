@@ -353,8 +353,8 @@
   margin-top: 14px;
 }
 
-/* 手环 9、10 为胶囊屏：避开圆角安全区，同时为底部模式入口预留固定空间。 */
-@media screen and (shape: pill-shaped) {
+/* 手环 9 / 10 的水平逻辑宽度为 96 / 106dp；9 Pro / 10 Pro 为 168dp。 */
+@media (max-width: 160) {
   .topbar {
     height: 68px;
     justify-content: center;
