@@ -8,10 +8,8 @@ node_modules/
 .vela/
 
 # Local build outputs
-build/*
-!build/.gitkeep
-dist/*
-!dist/.gitkeep
+build/
+dist/
 *.rpk
 
 # Signing materials: retain only the directory placeholder in Git.
