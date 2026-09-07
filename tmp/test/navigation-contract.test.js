@@ -93,7 +93,7 @@ test('Vela responsive contract: 小尺寸手环保留安全区、底部入口和
   const homeCompact = home.slice(home.indexOf('@media (max-width: 160)'));
   assert.ok(sharedCompact.includes('justify-content: center;'));
   assert.ok(/\.home-die-img,[\s\S]*?width:\s*164px;/.test(homeCompact));
-  assert.ok(homeCompact.includes('margin: 8px 28px 32px 28px;'));
+  assert.ok(homeCompact.includes('margin: 8px 28px 48px 28px;'));
   assert.ok(/\.list-item\s*\{[\s\S]*?height:\s*76px;/.test(style));
   assert.ok(/\.history-item\s*\{[\s\S]*?height:\s*72px;/.test(style));
 });
@@ -117,7 +117,7 @@ test('Vela home layout: 首页功能卡使用本页静态 Flex 布局，不依�
   assert.ok(!home.includes('transform:'));
   assert.ok(!style.includes('.mode-card'));
   assert.ok(home.includes('@media (max-width: 160)'));
-  assert.ok(home.includes('margin: 8px 28px 32px 28px;'));
+  assert.ok(home.includes('margin: 8px 28px 48px 28px;'));
 });
 
 test('Multi-device contract: 9、9 Pro、10、10 Pro 均有明确尺寸档与体验标识', () => {
