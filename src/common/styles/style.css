@@ -119,7 +119,7 @@
   color: #6f7178;
 }
 
-/* ---- 通用列表页（76px 触控卡片，超出可纵向滚动） ---- */
+/* ---- 通用列表页（80px 触控卡片，超出可纵向滚动） ---- */
 .list {
   flex: 1;
   /* Vela 容器默认不是浏览器的块级竖排流，列表必须显式纵向排列。 */
@@ -130,7 +130,7 @@
 
 .list-item {
   /* 大于原始 60px，保证小屏上仍有舒适的触控落点和呼吸感。 */
-  height: 76px;
+  height: 80px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -266,7 +266,7 @@
 
 /* ---- 历史记录 ---- */
 .history-item {
-  height: 74px;
+  height: 78px;
   flex-direction: row;
   align-items: center;
   background-color: #1c1c21;
@@ -409,14 +409,14 @@
   }
 
   .list-item {
-    height: 64px;
-    margin-bottom: 8px;
+    height: 76px;
+    margin-bottom: 10px;
     padding: 0 16px;
   }
 
   .history-item {
-    height: 64px;
-    margin-bottom: 8px;
+    height: 72px;
+    margin-bottom: 10px;
     padding: 0 16px;
   }
 
@@ -440,7 +440,8 @@
 
   .mode-card {
     height: 58px;
-    margin: 8px 28px 14px 28px;
+    /* 胶囊屏下抬高入口，避开底部圆角的不可触达区域。 */
+    margin: 8px 28px 30px 28px;
     padding: 0 16px;
   }
 

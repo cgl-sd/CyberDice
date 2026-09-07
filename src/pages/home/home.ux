@@ -22,7 +22,13 @@
         </div>
       </block>
       <block if="{{ rollState !== 'RESULT' }}">
-        <image class="{{ jitter ? 'die-img-shake-l' : 'die-img' }}" src="{{ dieSrc }}"></image>
+        <!-- Vela 对同一 image 的 class/src 连续更新偶发不重绘；交替节点可确保每帧提交。 -->
+        <block if="{{ jitter }}">
+          <image class="die-img-shake-l" src="{{ dieSrc }}"></image>
+        </block>
+        <block if="{{ !jitter }}">
+          <image class="die-img" src="{{ dieSrc }}"></image>
+        </block>
       </block>
     </div>
 

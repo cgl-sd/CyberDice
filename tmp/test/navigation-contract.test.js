@@ -114,12 +114,14 @@ test('Vela runtime parity: 页面通过 $app.$def 访问应用单例，列表显
 test('Vela visual parity: 首页骰子舞台与浏览器版一样直接由页面承载', () => {
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
   assert.ok(home.includes('<div class="dice-area" onclick="onTapRoll">'));
+  assert.ok(home.includes('<block if="{{ jitter }}">'));
+  assert.ok(home.includes('<block if="{{ !jitter }}">'));
   assert.ok(home.includes('src="{{ dieSrc }}"'));
   assert.ok(home.includes('src="/common/images/result-ticks.png"'));
   assert.ok(!home.includes('<dice-stage'));
   assert.ok(/\.die-img\s*\{[\s\S]*?width:\s*184px;/.test(style));
   assert.ok(/\.result-wrap\s*\{[\s\S]*?width:\s*276px;/.test(style));
-  assert.ok(/\.list-item\s*\{[\s\S]*?height:\s*76px;/.test(style));
+  assert.ok(/\.list-item\s*\{[\s\S]*?height:\s*80px;/.test(style));
   assert.ok(/\.list\s*\{[\s\S]*?overflow:\s*scroll;/.test(style));
 });
 
@@ -128,9 +130,9 @@ test('Vela responsive contract: 小尺寸手环保留安全区、底部入口和
   const compact = style.slice(style.indexOf('@media (max-width: 160)'));
   assert.ok(compact.includes('justify-content: center;'));
   assert.ok(/\.die-img,[\s\S]*?width:\s*164px;/.test(compact));
-  assert.ok(compact.includes('height: 58px;'));
+  assert.ok(compact.includes('margin: 8px 28px 30px 28px;'));
   assert.ok(compact.includes('.history-item'));
-  assert.ok(compact.includes('height: 64px;'));
+  assert.ok(compact.includes('height: 76px;'));
 });
 
 test('Simulator contract: 本地文件与 HTTP 打开时均使用相对资源和预打包逻辑', () => {
