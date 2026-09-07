@@ -1,7 +1,6 @@
 <template>
   <div class="topbar">
     <text class="nav-title">{{ title }}</text>
-    <text class="clock">{{ trailing }}</text>
   </div>
 </template>
 
@@ -9,7 +8,6 @@
 export default {
   props: {
     title: '',
-    trailing: ' ',
   },
 };
 </script>

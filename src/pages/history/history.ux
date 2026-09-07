@@ -5,7 +5,6 @@
     <div class="topbar">
       <text class="nav-title">历史记录</text>
       <text class="nav-action" show="{{ items.length > 0 }}" onclick="clearAll">清空</text>
-      <text class="clock" show="{{ items.length === 0 }}"> </text>
     </div>
 
     <!-- 空状态（概念图·空状态） -->

@@ -265,7 +265,6 @@ function renderHistory() {
   el('historyEmpty').style.display = has ? 'none' : '';
   el('historyList').style.display = has ? '' : 'none';
   el('clearHistory').style.display = has ? '' : 'none';
-  el('historyClockPad').style.display = has ? 'none' : '';
   const list = el('historyList');
   list.innerHTML = '';
   items.forEach((h) => {
@@ -457,14 +456,6 @@ async function main() {
     if (Math.abs(dx) >= 60) suppressTapUntil = Date.now() + 350;
     if (dx >= 60) navigate('dice-select');
   });
-
-  // 时钟
-  const updateClock = () => {
-    const d = new Date();
-    el('clock').textContent = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
-  };
-  updateClock();
-  setInterval(updateClock, 20000);
 
   // 信号注入
   el('btnShake').onclick = () => {

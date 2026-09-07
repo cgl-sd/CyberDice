@@ -4,7 +4,6 @@
   <div class="page">
     <div class="topbar">
       <text class="nav-title">主题</text>
-      <text class="clock"> </text>
     </div>
 
     <div class="list">

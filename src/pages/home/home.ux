@@ -6,7 +6,6 @@
     <!-- 顶栏：应用名 + 时钟（概念图·首页） -->
     <div class="topbar">
       <text class="app-name">CyberDice</text>
-      <text class="clock">{{ clock }}</text>
     </div>
 
     <!-- 主骰子区域：最大点击热区（FR-008） -->
@@ -34,7 +33,6 @@ const shakeSrcOf = (frame) => '/common/images/dice/shake-' + frame + '.png';
 
 export default {
   data: {
-    clock: '',
     rollState: 'READY',
     dieSrc: dieSrcOf(5),
     jitter: false,
@@ -49,7 +47,6 @@ export default {
     this.app = this.$app();
     this.sensor = sensorAdapterMod.createSensorAdapter();
     this._animTimer = null;
-    this._clockTimer = null;
     this._tick = 0;
     this._unsub = this.app.store.on((what) => {
       if (what === 'rollState' || what === 'mode' || what === 'settings') {
@@ -67,8 +64,6 @@ export default {
       (s) => this._onSample(s),
       (e) => this._onSensorError(e)
     );
-    this._updateClock();
-    this._clockTimer = setInterval(() => this._updateClock(), 20000);
     this.syncFromStore();
   },
 
@@ -76,10 +71,6 @@ export default {
     // 离开前台：立即取消订阅与动画（FR-009 / NFR-05）；掷骰控制器在 app 层继续
     this.sensor.stop();
     this.app.detector.reset();
-    if (this._clockTimer) {
-      clearInterval(this._clockTimer);
-      this._clockTimer = null;
-    }
     this._stopAnim();
   },
 
@@ -178,9 +169,5 @@ export default {
     }
   },
 
-  _updateClock() {
-    const d = new Date();
-    this.clock = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
-  },
 };
 </script>
