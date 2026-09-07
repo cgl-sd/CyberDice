@@ -122,11 +122,25 @@ function log(msg) {
   box.scrollTop = box.scrollHeight;
 }
 
-function setDeviceProfile(profileId) {
+function detectDeviceProfile(width, height) {
+  const short = Math.min(width, height);
+  const long = Math.max(width, height);
+  const closeTo = (value, target) => Math.abs(value - target) <= 8;
+  if (closeTo(short, 192) && closeTo(long, 490)) return 'band-9';
+  if (closeTo(short, 212) && closeTo(long, 520)) return 'band-10';
+  // 10 Pro 与 9 Pro 同为 336×480；浏览器无法区分具体硬件，保持正式基线预览。
+  return 'band-9-pro';
+}
+
+function setDeviceProfile(profileId, quiet) {
   const profile = DEVICE_PROFILES[profileId] || DEVICE_PROFILES['band-9-pro'];
   el('device').dataset.profile = DEVICE_PROFILES[profileId] ? profileId : 'band-9-pro';
-  el('deviceProfile').value = el('device').dataset.profile;
-  log('体验设备 -> ' + profile.name + '（' + profile.size + '，' + profile.tier + '）');
+  el('deviceAutoProfile').textContent = '自动识别：' + profile.name + ' · ' + profile.size + '（' + profile.tier + '）';
+  if (!quiet) log('自动识别设备 -> ' + profile.name + '（' + profile.size + '，' + profile.tier + '）');
+}
+
+function syncDeviceProfile() {
+  setDeviceProfile(detectDeviceProfile(window.innerWidth, window.innerHeight));
 }
 
 // ---- 应用级单例（对应 app.ux） ----
@@ -538,7 +552,8 @@ async function main() {
   el('btnSwipeUp').onclick = () => routeSwipe(0, -SWIPE_DISTANCE);
   el('btnSwipeRight').onclick = () => routeSwipe(SWIPE_DISTANCE, 0);
   el('btnSwipeLeft').onclick = () => routeSwipe(-SWIPE_DISTANCE, 0);
-  el('deviceProfile').onchange = (event) => setDeviceProfile(event.target.value);
+  syncDeviceProfile();
+  window.addEventListener('resize', syncDeviceProfile);
 
   // 信号注入
   el('btnShake').onclick = () => {
