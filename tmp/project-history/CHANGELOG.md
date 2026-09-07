@@ -6,6 +6,9 @@
 
 ### Changed
 
+- 对齐 AIoT-IDE/Vela 工具链的 manifest 路由格式（入口与页面键使用 `pages/...`），保留 Vela 原生 `router.push` 所需的 `/pages/...` URI；补齐已实际使用的 `system.router`、`system.storage` 能力声明。页面共享样式改为 Vela 编译器可解析的 CSS `@import`，使正式源码可由官方构建器编译并部署到模拟器。
+- 合并 AIoT-IDE 创建的重复模板工程：根目录吸收官方构建/调试脚本及依赖和 `config-watch.json`，模板将归档至 `tmp/`，避免存在两套同名源码与构建入口。
+- Git 忽略本地 AIoT-IDE 配置和依赖目录；构建产物仍只保留目录占位文件，调试 RPK 不提交。
 - 工程目录按发布与源码职责重组：新增根目录 `build/`、`dist/`、`sign/`；运行时图片迁至 `src/common/images/`，JavaScript 模块迁至 `src/common/scripts/`，共享样式迁至 `src/common/styles/`；预留 `src/common/components/` 和 `src/i18n/`。
 - 所有页面、manifest、应用入口、单元测试、模拟器和资产生成器均已更新至新路径；模拟器、生成工具、需求说明、概念图和变更历史归档到 `tmp/`。
 - 重写根目录 README 和 AGENTS 指引，明确发布物、签名材料、离线边界、测试位置与归档规则；不生成或提交伪造的 PEM 签名文件。

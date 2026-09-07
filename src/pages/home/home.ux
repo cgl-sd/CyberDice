@@ -1,5 +1,7 @@
 <import name="dice-stage" src="../../common/components/dice-stage.ux"></import>
-<style src="../../common/styles/style.css"></style>
+<style>
+@import '../../common/styles/style.css';
+</style>
 
 <template>
   <div class="page" onswipe="onSwipe">

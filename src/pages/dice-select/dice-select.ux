@@ -1,6 +1,8 @@
 <import name="page-header" src="../../common/components/page-header.ux"></import>
 <import name="list-row" src="../../common/components/list-row.ux"></import>
-<style src="../../common/styles/style.css"></style>
+<style>
+@import '../../common/styles/style.css';
+</style>
 
 <template>
   <div class="page">

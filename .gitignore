@@ -1,6 +1,11 @@
 # macOS metadata
 .DS_Store
 
+# Local editor and package-manager state
+.vscode/
+node_modules/
+tmp/aiot-ide-template-20260907/
+
 # Local build outputs
 build/*
 !build/.gitkeep
