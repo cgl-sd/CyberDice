@@ -4,7 +4,7 @@
  */
 
 module.exports = {
-  VERSION: '1.1.0',
+  VERSION: '1.1.1',
 
   // 掷骰模式
   MODE_1D6: '1D6',
@@ -42,8 +42,8 @@ module.exports = {
     TAP_ROLL_MS: 500,
     // 摇动触发的最短动画时长
     SHAKE_MIN_ROLL_MS: 400,
-    // 从首次摇动触发起计时，重新摇动不延长上限
-    SHAKE_MAX_ROLL_MS: 3000,
+    // 从首次摇动触发起计时，重新摇动不延长上限；避免持续甩腕造成过长动画
+    SHAKE_MAX_ROLL_MS: 1200,
     // 结果展示时长：保证结果稳定显示 >= 1s，同时覆盖 500~800ms 冷却
     RESULT_MS: 1000,
   },

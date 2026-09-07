@@ -7,16 +7,22 @@
   width: 100%;
   height: 100%;
   background-color: #000000;
+  /* 页面外层不参与滚动；仅 .list 在顶部栏下方的可视区域内滚动。 */
+  overflow: hidden;
 }
 
 /* ---- 顶栏 ---- */
 .topbar {
   height: 52px;
+  position: relative;
+  z-index: 1;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
   flex-shrink: 0;
+  /* 防止滚动卡片透过固定顶部栏。 */
+  background-color: #000000;
 }
 
 .app-name {
@@ -39,15 +45,17 @@
 /* ---- 通用列表页（80px 触控卡片，超出可纵向滚动） ---- */
 .list {
   flex: 1;
+  min-height: 0;
   /* Vela 容器默认不是浏览器的块级竖排流，列表必须显式纵向排列。 */
   flex-direction: column;
+  /* 卡片抵达此滚动容器顶端即被裁切，不得侵入顶部栏。 */
   overflow: scroll;
   padding: 4px 16px 16px 16px;
 }
 
 .list-item {
-  /* 大于原始 60px，保证小屏上仍有舒适的触控落点和呼吸感。 */
-  height: 80px;
+  /* 原 80px 与历史卡片 98px 的中间值，统一列表触控节奏。 */
+  height: 88px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -116,6 +124,14 @@
   background-color: #2f6bed;
 }
 
+.toggle-on.theme-green {
+  background-color: #2fbf6b;
+}
+
+.toggle-on.theme-purple {
+  background-color: #8a5cf6;
+}
+
 .toggle-off {
   justify-content: flex-start;
   background-color: #3a3a3e;
@@ -181,6 +197,14 @@
   margin-top: 6px;
 }
 
+.btn-primary.theme-green {
+  background-color: #2fbf6b;
+}
+
+.btn-primary.theme-purple {
+  background-color: #8a5cf6;
+}
+
 .btn-primary-text {
   font-size: 26px;
   color: #ffffff;
@@ -196,7 +220,8 @@
 
 /* ---- 历史记录 ---- */
 .history-item {
-  height: 78px;
+  /* 原 78px 与增大后的 98px 取中值，并与通用列表行对齐。 */
+  height: 88px;
   flex-direction: row;
   align-items: center;
   background-color: #1c1c21;
@@ -206,7 +231,7 @@
 }
 
 .history-value {
-  font-size: 34px;
+  font-size: 37px;
   color: #ffffff;
   font-weight: bold;
   width: 70px;
@@ -219,12 +244,12 @@
 }
 
 .history-mode {
-  font-size: 20px;
+  font-size: 22px;
   color: #8b9397;
 }
 
 .history-time {
-  font-size: 20px;
+  font-size: 22px;
   color: #8b9397;
 }
 
@@ -295,13 +320,13 @@
   }
 
   .list-item {
-    height: 76px;
+    height: 80px;
     margin-bottom: 10px;
     padding: 0 16px;
   }
 
   .history-item {
-    height: 72px;
+    height: 80px;
     margin-bottom: 10px;
     padding: 0 16px;
   }
@@ -311,13 +336,13 @@
   }
 
   .history-value {
-    font-size: 30px;
+    font-size: 32px;
     width: 58px;
   }
 
   .history-mode,
   .history-time {
-    font-size: 18px;
+    font-size: 20px;
   }
 
 

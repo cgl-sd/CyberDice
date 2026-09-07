@@ -3,7 +3,7 @@
 </style>
 
 <template>
-  <div class="page">
+  <div class="page" ontouchstart="onTouchStart" ontouchend="onTouchEnd">
     <div class="topbar">
       <text class="nav-title">设置</text>
     </div>
@@ -12,16 +12,18 @@
       <!-- 震动反馈 -->
       <div class="list-item" onclick="toggleVibration">
         <text class="item-label">震动反馈</text>
-        <div class="toggle {{ settings.vibration ? 'toggle-on' : 'toggle-off' }}">
-          <div class="toggle-knob"></div>
-        </div>
+        <block if="{{ settings.vibration && settings.accent === 'blue' }}"><div class="toggle toggle-on"><div class="toggle-knob"></div></div></block>
+        <block if="{{ settings.vibration && settings.accent === 'green' }}"><div class="toggle toggle-on theme-green"><div class="toggle-knob"></div></div></block>
+        <block if="{{ settings.vibration && settings.accent === 'purple' }}"><div class="toggle toggle-on theme-purple"><div class="toggle-knob"></div></div></block>
+        <block if="{{ !settings.vibration }}"><div class="toggle toggle-off"><div class="toggle-knob"></div></div></block>
       </div>
       <!-- 动画效果 -->
       <div class="list-item" onclick="toggleAnimation">
         <text class="item-label">动画效果</text>
-        <div class="toggle {{ settings.animation ? 'toggle-on' : 'toggle-off' }}">
-          <div class="toggle-knob"></div>
-        </div>
+        <block if="{{ settings.animation && settings.accent === 'blue' }}"><div class="toggle toggle-on"><div class="toggle-knob"></div></div></block>
+        <block if="{{ settings.animation && settings.accent === 'green' }}"><div class="toggle toggle-on theme-green"><div class="toggle-knob"></div></div></block>
+        <block if="{{ settings.animation && settings.accent === 'purple' }}"><div class="toggle toggle-on theme-purple"><div class="toggle-knob"></div></div></block>
+        <block if="{{ !settings.animation }}"><div class="toggle toggle-off"><div class="toggle-knob"></div></div></block>
       </div>
       <!-- 主题 -->
       <div class="list-item" onclick="goTheme">
@@ -39,6 +41,7 @@
 
 <script>
 const router = require('@system.router');
+const touchSwipeMod = require('../../common/scripts/touch-swipe.js');
 
 export default {
   data: {
@@ -47,6 +50,9 @@ export default {
 
   onInit() {
     this.app = this.$app.$def;
+    this.gesture = touchSwipeMod.createTouchSwipe((direction) => {
+      if (direction === 'right') router.back();
+    });
     this._unsub = this.app.store.on((what) => {
       if (what === 'settings' || what === 'load') {
         this.settings = Object.assign({}, this.app.store.getState().settings);
@@ -76,6 +82,12 @@ export default {
   },
   goAbout() {
     router.push({ uri: '/pages/about' });
+  },
+  onTouchStart(event) {
+    this.gesture.startTouch(event);
+  },
+  onTouchEnd(event) {
+    this.gesture.endTouch(event);
   },
 };
 </script>

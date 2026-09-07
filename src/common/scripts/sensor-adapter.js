@@ -41,7 +41,8 @@ function createSensorAdapter(sensorModule) {
     try {
       sensor.subscribeAccelerometer({
         interval: 'game',
-        success: function (data) {
+        // Vela 的加速度计是持续订阅；数据回调字段为 callback，而非一次性 API 的 success。
+        callback: function (data) {
           if (!subscribed) {
             return;
           }

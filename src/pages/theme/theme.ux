@@ -3,7 +3,7 @@
 </style>
 
 <template>
-  <div class="page">
+  <div class="page" ontouchstart="onTouchStart" ontouchend="onTouchEnd">
     <div class="topbar">
       <text class="nav-title">主题</text>
     </div>
@@ -35,6 +35,9 @@
 </template>
 
 <script>
+const router = require('@system.router');
+const touchSwipeMod = require('../../common/scripts/touch-swipe.js');
+
 export default {
   data: {
     settings: { vibration: true, animation: true, accent: 'blue' },
@@ -42,6 +45,9 @@ export default {
 
   onInit() {
     this.app = this.$app.$def;
+    this.gesture = touchSwipeMod.createTouchSwipe((direction) => {
+      if (direction === 'right') router.back();
+    });
     this._unsub = this.app.store.on((what) => {
       if (what === 'settings' || what === 'load') {
         this.settings = Object.assign({}, this.app.store.getState().settings);
@@ -66,6 +72,14 @@ export default {
   pickBlue() { this.pick('blue'); },
   pickGreen() { this.pick('green'); },
   pickPurple() { this.pick('purple'); },
+
+  onTouchStart(event) {
+    this.gesture.startTouch(event);
+  },
+
+  onTouchEnd(event) {
+    this.gesture.endTouch(event);
+  },
 
 };
 </script>

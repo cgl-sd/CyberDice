@@ -3,7 +3,7 @@
 </style>
 
 <template>
-  <div class="page">
+  <div class="page" ontouchstart="onTouchStart" ontouchend="onTouchEnd">
     <!-- 与浏览器模拟器保持同一层级：标题和所有功能入口都是页面自身的直接子元素。 -->
     <div class="topbar">
       <text class="nav-title">功能</text>
@@ -60,6 +60,7 @@
 
 <script>
 const router = require('@system.router');
+const touchSwipeMod = require('../../common/scripts/touch-swipe.js');
 
 export default {
   data: {
@@ -70,6 +71,9 @@ export default {
 
   onInit() {
     this.app = this.$app.$def;
+    this.gesture = touchSwipeMod.createTouchSwipe((direction) => {
+      if (direction === 'right') router.back();
+    });
   },
 
   onShow() {
@@ -118,6 +122,14 @@ export default {
 
   goAbout() {
     router.push({ uri: '/pages/about' });
+  },
+
+  onTouchStart(event) {
+    this.gesture.startTouch(event);
+  },
+
+  onTouchEnd(event) {
+    this.gesture.endTouch(event);
   },
 
 };

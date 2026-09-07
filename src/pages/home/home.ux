@@ -41,14 +41,6 @@
   font-weight: bold;
 }
 
-.home-result-num-green {
-  color: #2fbf6b;
-}
-
-.home-result-num-purple {
-  color: #a980ff;
-}
-
 .home-result-sub {
   position: absolute;
   margin-top: 136px;
@@ -57,35 +49,12 @@
 }
 
 .home-hint {
-  height: 32px;
+  height: 48px;
   font-size: 20px;
   color: #9a9ca3;
   text-align: center;
   flex-shrink: 0;
-}
-
-.home-function-card {
-  height: 56px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #1c1c21;
-  border-radius: 16px;
-  /* 大屏功能卡底边距 8px；小屏由下方宽度媒体查询覆盖。 */
-  margin: 10px 16px 8px 16px;
-  padding: 0 20px;
-  flex-shrink: 0;
-}
-
-.home-function-label {
-  font-size: 24px;
-  color: #ffffff;
-  font-weight: bold;
-}
-
-.home-function-chevron {
-  font-size: 26px;
-  color: #6f7178;
+  margin: 0 16px 16px 16px;
 }
 
 @media (max-width: 120) {
@@ -94,8 +63,14 @@
   }
 
   .home-dice-area {
-    /* 为绝对定位的提示与功能入口预留垂直空间，防止 Flex 内容挤出屏幕。 */
-    margin-bottom: 140px;
+    /* 提示在 Flex 流末端，骰子舞台可占用其余纵向安全空间。 */
+    margin-bottom: 0;
+  }
+
+  /* 胶囊屏顶部圆角留白更大：标题轻微下移，避免贴近屏幕边缘。 */
+  .home-topbar {
+    height: 72px;
+    padding: 12px 36px 0 36px;
   }
 
   .home-die-img,
@@ -124,35 +99,18 @@
   }
 
   .home-hint {
-    height: 28px;
+    height: 40px;
     font-size: 17px;
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    bottom: 140px;
-  }
-
-  .home-function-card {
-    height: 58px;
-    /* 脱离 Flex 内容流，直接锚定在胶囊屏圆角上方的安全区。 */
-    position: absolute;
-    left: 28px;
-    right: 28px;
-    bottom: 74px;
-    margin: 0px;
-    padding: 0 16px;
-  }
-
-  .home-function-label {
-    font-size: 22px;
+    /* 底部圆角与手势区较深，提示上移以保持完整可读。 */
+    margin: 0 28px 42px 28px;
   }
 }
 </style>
 
 <template>
-  <div class="page" onswipe="onSwipe">
+  <div class="page" ontouchstart="onTouchStart" ontouchend="onTouchEnd">
     <!-- 顶栏：应用名 + 时钟（概念图·首页） -->
-    <div class="topbar">
+    <div class="topbar home-topbar">
       <text class="app-name">CyberDice</text>
     </div>
 
@@ -163,11 +121,11 @@
     <div class="home-dice-area" onclick="onTapRoll">
       <block if="{{ rollState === 'RESULT' }}">
         <div class="home-result-wrap">
-          <image class="home-result-ticks" src="/common/images/result-ticks.png"></image>
-          <!-- 独立条件节点避免 Vela 在主题切换后复用旧 color。 -->
-          <block if="{{ accent === 'blue' }}"><text class="home-result-num">{{ resultNum }}</text></block>
-          <block if="{{ accent === 'green' }}"><text class="home-result-num home-result-num-green">{{ resultNum }}</text></block>
-          <block if="{{ accent === 'purple' }}"><text class="home-result-num home-result-num-purple">{{ resultNum }}</text></block>
+          <!-- 主题色只用于结果环；最终点数始终以白色保证可读性。 -->
+          <block if="{{ accent === 'blue' }}"><image class="home-result-ticks" src="/common/images/result-ticks.png"></image></block>
+          <block if="{{ accent === 'green' }}"><image class="home-result-ticks" src="/common/images/result-ticks-green.png"></image></block>
+          <block if="{{ accent === 'purple' }}"><image class="home-result-ticks" src="/common/images/result-ticks-purple.png"></image></block>
+          <text class="home-result-num">{{ resultNum }}</text>
           <text class="home-result-sub" show="{{ resultSub !== '' }}">{{ resultSub }}</text>
         </div>
       </block>
@@ -182,13 +140,8 @@
       </block>
     </div>
 
+    <!-- 功能页改由首页右滑进入；提示固定在页面下方。 -->
     <text class="home-hint">{{ hint }}</text>
-
-    <!-- 底部模式卡片 → 功能入口 -->
-    <div class="home-function-card" onclick="goDiceSelect">
-      <text class="home-function-label">{{ modeLabel }}</text>
-      <text class="home-function-chevron">›</text>
-    </div>
   </div>
 </template>
 
@@ -196,6 +149,8 @@
 const C = require('../../common/scripts/constants.js');
 const diceEngine = require('../../common/scripts/dice-engine.js');
 const sensorAdapterMod = require('../../common/scripts/sensor-adapter.js');
+const screenAdapterMod = require('../../common/scripts/screen-adapter.js');
+const touchSwipeMod = require('../../common/scripts/touch-swipe.js');
 const router = require('@system.router');
 
 const dieSrcOf = (v) => '/common/images/dice/die-' + v + '.png';
@@ -217,8 +172,11 @@ export default {
 
   onInit() {
     this.sensor = sensorAdapterMod.createSensorAdapter();
+    this.screen = screenAdapterMod.createScreenAdapter();
     this._animTimer = null;
     this._tick = 0;
+    this._ignoreTapUntil = 0;
+    this.gesture = touchSwipeMod.createTouchSwipe((direction) => this._onGesture(direction));
     this._unsub = null;
     try {
       this.app = this.$app.$def;
@@ -237,6 +195,8 @@ export default {
   },
 
   onShow() {
+    // 首页前台保持屏幕常亮，避免息屏后应用转后台、加速度计回调停止。
+    this.screen.keepOn();
     // 恢复前台：重置 Detector 并重新订阅传感器（第 14 节）
     this.sensorFallback = false;
     if (!this.app) {
@@ -253,7 +213,8 @@ export default {
   },
 
   onHide() {
-    // 离开前台：立即取消订阅、动画及未完成掷骰（FR-009 / NFR-05）。
+    // 离开首页：恢复系统自动熄屏，取消订阅、动画及未完成掷骰（FR-009 / NFR-05）。
+    this.screen.release();
     this.sensor.stop();
     this._stopAnim();
     if (this.app) {
@@ -263,6 +224,7 @@ export default {
   },
 
   onDestroy() {
+    this.screen.release();
     this.sensor.stop();
     this._stopAnim();
     if (this.app && this.app.controller) {
@@ -276,21 +238,33 @@ export default {
   // ---- 交互 ----
 
   onTapRoll() {
+    if (Date.now() < this._ignoreTapUntil) {
+      return;
+    }
     this.app.controller.trigger('tap');
   },
 
-  goDiceSelect() {
-    router.push({ uri: '/pages/dice-select' });
+  onTouchStart(event) {
+    this.gesture.startTouch(event);
   },
-  onSwipe(event) {
-    if (this.rollState !== C.STATE_READY || !event) {
+
+  onTouchEnd(event) {
+    this.gesture.endTouch(event);
+  },
+
+  _onGesture(direction) {
+    if (this.rollState !== C.STATE_READY) {
       return;
     }
-    // 左滑仍保留给系统退出；首页上滑直达历史记录，右滑进入功能。
-    if (event.direction === 'right') {
+    // 手势后的 click 不应同时触发一次掷骰。
+    this._ignoreTapUntil = Date.now() + 250;
+    // 左→右返回；右→左进入功能，下→上直达历史记录。
+    if (direction === 'left') {
       router.push({ uri: '/pages/dice-select' });
-    } else if (event.direction === 'up') {
+    } else if (direction === 'up') {
       router.push({ uri: '/pages/history' });
+    } else if (direction === 'right') {
+      router.back();
     }
   },
 
@@ -308,6 +282,10 @@ export default {
   _onSensorError(err) {
     console.error('sensor fail: ' + JSON.stringify(err));
     this.sensorFallback = true;
+    // 摇骰途中传感器异常时不能等待永远不会到来的 SHAKE_END；取消流程并保留点击兜底。
+    if (this.app && this.app.controller) {
+      this.app.controller.cancel();
+    }
     this.syncFromStore();
   },
 
