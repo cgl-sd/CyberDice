@@ -6,6 +6,8 @@
 
 ### Changed
 
+- 功能页的 1D6 / 2D6 / 3D6 / 1D20 改为独立条件选中节点，规避 Vela 列表节点复用使 1D6 选中蓝标滞留的问题；卡片高度由 68px 提升至 76px，入口区域支持纵向滚动。
+
 - 对齐 AIoT-IDE/Vela 工具链的 manifest 路由格式（入口与页面键使用 `pages/...`），保留 Vela 原生 `router.push` 所需的 `/pages/...` URI；补齐已实际使用的 `system.router`、`system.storage` 能力声明。页面共享样式改为 Vela 编译器可解析的 CSS `@import`，使正式源码可由官方构建器编译并部署到模拟器。
 - 合并 AIoT-IDE 创建的重复模板工程：根目录吸收官方构建/调试脚本及依赖和 `config-watch.json`，模板将归档至 `tmp/`，避免存在两套同名源码与构建入口。
 - Git 忽略本地 AIoT-IDE 配置和依赖目录；构建产物仍只保留目录占位文件，调试 RPK 不提交。

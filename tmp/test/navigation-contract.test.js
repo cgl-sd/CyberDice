@@ -87,6 +87,11 @@ test('Vela visual parity: 功能与历史页面使用浏览器版同款页面内
     assert.ok(selectPage.includes('<text class="item-label">' + label + '</text>'));
   });
   assert.ok(!selectPage.includes('<list-row'));
+  ['selectD6', 'select2D6', 'select3D6', 'selectD20'].forEach((handler) => {
+    assert.ok(selectPage.includes('onclick="' + handler + '"'));
+  });
+  assert.ok(selectPage.includes("selectedLabel === '1D6'"));
+  assert.ok(selectPage.includes("selectedLabel !== '1D6'"));
   assert.ok(history.includes('<block if="{{ items.length === 0 }}">'));
   assert.ok(history.includes('<block if="{{ items.length > 0 }}">'));
 });
@@ -108,7 +113,8 @@ test('Vela visual parity: 首页骰子舞台与浏览器版一样直接由页面
   assert.ok(home.includes('src="{{ dieSrc }}"'));
   assert.ok(home.includes('src="/common/images/result-ticks.png"'));
   assert.ok(!home.includes('<dice-stage'));
-  assert.ok(/\.list-item\s*\{[\s\S]*?height:\s*68px;/.test(style));
+  assert.ok(/\.list-item\s*\{[\s\S]*?height:\s*76px;/.test(style));
+  assert.ok(/\.list\s*\{[\s\S]*?overflow:\s*scroll;/.test(style));
 });
 
 test('Simulator contract: 本地文件与 HTTP 打开时均使用相对资源和预打包逻辑', () => {

@@ -10,11 +10,26 @@
     </div>
 
     <div class="list">
-      <div class="list-item" for="{{ presets }}" onclick="selectPreset($item)">
-        <text class="item-label">{{ $item }}</text>
-        <div class="{{ selectedLabel === $item ? 'check-circle' : 'check-ring' }}">
-          <text class="check-glyph" show="{{ selectedLabel === $item }}">✓</text>
-        </div>
+      <!-- Vela 的 for 节点会复用样式节点；预设入口使用独立条件节点，避免旧选中态滞留。 -->
+      <div class="list-item" onclick="selectD6">
+        <text class="item-label">1D6</text>
+        <block if="{{ selectedLabel === '1D6' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel !== '1D6' }}"><div class="check-ring"></div></block>
+      </div>
+      <div class="list-item" onclick="select2D6">
+        <text class="item-label">2D6</text>
+        <block if="{{ selectedLabel === '2D6' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel !== '2D6' }}"><div class="check-ring"></div></block>
+      </div>
+      <div class="list-item" onclick="select3D6">
+        <text class="item-label">3D6</text>
+        <block if="{{ selectedLabel === '3D6' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel !== '3D6' }}"><div class="check-ring"></div></block>
+      </div>
+      <div class="list-item" onclick="selectD20">
+        <text class="item-label">1D20</text>
+        <block if="{{ selectedLabel === '1D20' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel !== '1D20' }}"><div class="check-ring"></div></block>
       </div>
       <div class="list-item" onclick="goCustom">
         <text class="item-label">自定义</text>
@@ -43,7 +58,6 @@ const router = require('@system.router');
 
 export default {
   data: {
-    presets: ['1D6', '2D6', '3D6', '1D20'],
     selectedLabel: '1D6',
     isCustom: false,
   },
@@ -63,9 +77,27 @@ export default {
   },
 
   selectPreset(label) {
-    this.app.selectMode(label);
-    this.refresh();
-    router.back();
+    if (this.app.selectMode(label)) {
+      this.selectedLabel = label;
+      this.isCustom = false;
+      router.back();
+    }
+  },
+
+  selectD6() {
+    this.selectPreset('1D6');
+  },
+
+  select2D6() {
+    this.selectPreset('2D6');
+  },
+
+  select3D6() {
+    this.selectPreset('3D6');
+  },
+
+  selectD20() {
+    this.selectPreset('1D20');
   },
 
   goCustom() {

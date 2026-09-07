@@ -115,17 +115,18 @@
   color: #6f7178;
 }
 
-/* ---- 通用列表页（行高 60，一屏可容纳 5 行以上） ---- */
+/* ---- 通用列表页（76px 触控卡片，超出可纵向滚动） ---- */
 .list {
   flex: 1;
   /* Vela 容器默认不是浏览器的块级竖排流，列表必须显式纵向排列。 */
   flex-direction: column;
+  overflow: scroll;
   padding: 4px 16px 16px 16px;
 }
 
 .list-item {
-  /* 比原始 60px 略高，提升手环触控与文字呼吸感。 */
-  height: 68px;
+  /* 大于原始 60px，保证小屏上仍有舒适的触控落点和呼吸感。 */
+  height: 76px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
