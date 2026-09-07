@@ -1,37 +1,40 @@
 # CyberDice
 
-面向小米手环 9 系列与手环 10 系列的离线摇骰子应用，采用 Vela JS 快应用开发，RPK 包名为 `com.vibecoding.cyberdice`。小米手环 9 Pro（336×480）是正式基线；手环 9（192×490）、手环 10（212×520）和手环 10 Pro（336×480）提供体验版布局档，待真机验收后提升为正式支持。
+CyberDice 是一款完全离线运行的 Xiaomi Vela JS 摇骰子应用，包名为 `com.vibecoding.cyberdice`，交付物为 RPK。点击屏幕或摇动手腕即可投掷；结果由本地随机逻辑生成，并以动画和震动完成反馈。
 
-## 目录
+![CyberDice 设计参考图](tmp/reference/design/e31c58c5-5586-4229-88c4-8791c72703df.png)
 
-```text
-├── README.md                 # 项目入口与使用说明
-├── AGENTS.md                 # 协作与工程约束
-├── package.json              # Node 辅助命令
-├── build/                    # 本地构建中间产物（不提交）
-├── dist/                     # 最终 RPK 构建产物（不提交）
-├── sign/                     # 本地签名材料（不提交；证书和私钥由 AIoT-IDE 生成/导入）
-├── src/                      # 快应用源码
-│   ├── app.ux                # 应用入口
-│   ├── manifest.json         # Vela 路由、能力与包配置
-│   ├── common/
-│   │   ├── components/       # 可复用 UX 组件
-│   │   ├── images/           # 图标、骰子帧和其他运行时图像
-│   │   ├── scripts/          # 平台无关逻辑与平台适配器
-│   │   └── styles/           # 共享样式
-│   ├── i18n/                 # 预留的多语言资源目录
-│   └── pages/                # 7 个页面
-└── tmp/                      # 非发布内容：测试、模拟器、工具、参考资料与历史记录
-```
+## 交互
 
-当前界面文本尚未接入国际化；`src/i18n/` 已预留，新增语言时再添加 `defaults.json`、`zh-CN.json` 和其他语言资源。
+- 点击骰子或摇腕：开始投掷；动画不会影响最终随机结果。
+- 首页上滑：查看历史记录。
+- 首页右滑或底部模式卡：打开功能页。
+- 左滑：保留给系统返回/退出。
 
-## 常用命令
+## 设备适配
+
+小米手环 9 Pro（336×480）与 10 Pro 为矩形大屏基线：骰子 184px、结果环 276px。小米手环 9（192×490）与 10（212×520）通过 Vela 的 `max-width: 160dp` 媒体查询使用独立安全区、上移的功能入口和紧凑列表布局。9/10/10 Pro 仍需完成各自真机验收后才可标为正式支持。
+
+## 开发与验证
 
 ```bash
-npm test
-npm run sim
-# 在浏览器打开 http://127.0.0.1:8931/tmp/sim/index.html
+npm test       # 平台无关逻辑与 UI 契约测试
+npm run build  # 生成调试 RPK
+npm start      # 启动并部署到 Vela 虚拟设备（交互式选择设备）
 ```
 
-资产可用 `node tmp/tools/gen-assets.js` 重建。构建、签名和真机安装按 `tmp/reference/` 中的需求说明执行；`sign/` 绝不应提交真实的 `certificate.pem` 或 `private.pem`。
+在 AIoT IDE 中打开本项目后，可通过“调试”部署到已选虚拟设备或真机。`sign/` 仅用于本地证书，绝不提交 `certificate.pem`、`private.pem` 或任何真实签名材料。
+
+## 工程结构
+
+```text
+src/                 Vela 应用源码、路由、图片、样式与逻辑
+tmp/test/            无第三方依赖的自动化测试
+tmp/reference/       产品需求、设备适配资料与设计参考图
+tmp/project-history/  变更记录
+build/                本地构建中间产物（忽略）
+dist/                 本地 RPK 产物（忽略）
+sign/                 本地签名材料（忽略）
+```
+
+详细实现边界见 [AGENTS.md](AGENTS.md)，需求基线见 [产品需求说明](tmp/reference/Wrist_Dice_小米手环9Pro_产品需求与程序设计说明书.md)。

@@ -97,7 +97,8 @@
 }
 
 .mode-card {
-  height: 64px;
+  /* 矩形大屏保留原始位置与尺寸；小屏尺寸在媒体查询中单独覆盖。 */
+  height: 56px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;

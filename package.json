@@ -5,7 +5,6 @@
   "description": "CyberDice：小米手环 9 / 9 Pro / 10 / 10 Pro 摇骰子应用（Vela JS 快应用）",
   "scripts": {
     "test": "node tmp/test/run.js",
-    "sim": "python3 -m http.server 8931",
     "start": "aiot start --watch",
     "build": "aiot build",
     "release": "aiot release"

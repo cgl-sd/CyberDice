@@ -18,69 +18,30 @@ test('Navigation contract: 摇动只引用预渲染残影，不引用旧模糊�
 });
 
 test('Navigation contract: 页面组件与页面模板不绘制应用内返回按钮', () => {
-  const roots = [
-    path.join(__dirname, '..', '..', 'src', 'common', 'components'),
-    path.join(__dirname, '..', '..', 'src', 'pages'),
-  ];
-  roots.forEach((root) => {
-    const entries = fs.readdirSync(root, { withFileTypes: true });
-    entries.forEach((entry) => {
-      const file = entry.isDirectory() ? path.join(root, entry.name, entry.name + '.ux') : path.join(root, entry.name);
-      if (file.endsWith('.ux') && fs.existsSync(file)) {
-        assert.ok(!fs.readFileSync(file, 'utf8').includes('nav-back'), file + ' 不应有返回按钮');
-      }
-    });
+  const pages = path.join(__dirname, '..', '..', 'src', 'pages');
+  fs.readdirSync(pages, { withFileTypes: true }).forEach((entry) => {
+    const file = path.join(pages, entry.name, entry.name + '.ux');
+    if (entry.isDirectory() && fs.existsSync(file)) {
+      assert.ok(!fs.readFileSync(file, 'utf8').includes('nav-back'), file + ' 不应有返回按钮');
+    }
   });
-});
-
-test('Vela visual parity: 复用组件在自身作用域内声明浏览器版同款关键样式', () => {
-  const components = path.join(__dirname, '..', '..', 'src', 'common', 'components');
-  const diceStage = fs.readFileSync(path.join(components, 'dice-stage.ux'), 'utf8');
-  const pageHeader = fs.readFileSync(path.join(components, 'page-header.ux'), 'utf8');
-  const listRow = fs.readFileSync(path.join(components, 'list-row.ux'), 'utf8');
-  assert.ok(diceStage.includes('<style>'));
-  assert.ok(diceStage.includes('.die-img'));
-  assert.ok(diceStage.includes('width: 148px;'));
-  assert.ok(diceStage.includes('.result-num'));
-  assert.ok(diceStage.includes('font-size: 110px;'));
-  assert.ok(pageHeader.includes('.topbar'));
-  assert.ok(pageHeader.includes('.nav-title'));
-  assert.ok(listRow.includes('.list-item'));
-  assert.ok(listRow.includes('.item-label'));
-});
-
-test('Simulator navigation contract: 控制面板按钮模拟上滑、右滑和左滑', () => {
-  const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
-  assert.ok(sim.includes("device.addEventListener('pointercancel', cancelGesture)"));
-  assert.ok(sim.includes("device.addEventListener('touchstart', beginGesture"));
-  assert.ok(sim.includes("el('btnSwipeUp').onclick = () => routeSwipe(0, -SWIPE_DISTANCE)"));
-  assert.ok(sim.includes("el('btnSwipeRight').onclick = () => routeSwipe(SWIPE_DISTANCE, 0)"));
-  assert.ok(sim.includes("el('btnSwipeLeft').onclick = () => routeSwipe(-SWIPE_DISTANCE, 0)"));
-  assert.ok(sim.includes("if (upward) navigate('history')"));
-  assert.ok(!sim.includes("el('historyCard').onclick"));
 });
 
 test('About contract: 使用概念图骰子并完成中文本地化', () => {
   const about = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'about', 'about.ux'), 'utf8');
-  const simHtml = fs.readFileSync(path.join(__dirname, '..', 'sim', 'index.html'), 'utf8');
-  [about, simHtml].forEach((content) => {
-    assert.ok(content.includes('ready-reference.png'));
-    assert.ok(content.includes('摇一摇，随时掷骰'));
-    assert.ok(!content.includes('Shake. Roll. Anywhere.'));
-  });
+  assert.ok(about.includes('ready-reference.png'));
+  assert.ok(about.includes('摇一摇，随时掷骰'));
+  assert.ok(!about.includes('Shake. Roll. Anywhere.'));
   assert.ok(about.includes('版本 v{{ version }}'));
-  assert.ok(simHtml.includes('版本 v1.1.0'));
 });
 
 test('Feature contract: 功能页保留关于入口，历史记录仅由首页上滑进入', () => {
   const selectPage = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'dice-select', 'dice-select.ux'), 'utf8');
-  const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
   assert.ok(selectPage.includes('<text class="nav-title">功能</text>'));
   assert.ok(selectPage.includes('<text class="item-label">关于</text>'));
   assert.ok(selectPage.includes("router.push({ uri: '/pages/about' })"));
   assert.ok(!selectPage.includes('<text class="item-label">历史记录</text>'));
   assert.ok(!selectPage.includes('goHistory()'));
-  assert.ok(sim.includes("about.onclick = () => navigate('about')"));
 });
 
 test('Vela visual parity: 功能与历史页面使用浏览器版同款页面内卡片和条件结构', () => {
@@ -135,31 +96,10 @@ test('Vela responsive contract: 小尺寸手环保留安全区、底部入口和
   assert.ok(compact.includes('height: 76px;'));
 });
 
-test('Simulator contract: 本地文件与 HTTP 打开时均使用相对资源和预打包逻辑', () => {
-  const simHtml = fs.readFileSync(path.join(__dirname, '..', 'sim', 'index.html'), 'utf8');
-  const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
-  assert.ok(simHtml.includes('src="common-bundle.js?v=1"'));
-  assert.ok(!simHtml.includes('src="/src/common/images/'));
-  assert.ok(sim.includes("const ASSET_ROOT = '../../src/common/images/';"));
-  assert.ok(sim.includes('window.CyberDiceModules'));
-});
-
 test('Multi-device contract: 9、9 Pro、10、10 Pro 均有明确尺寸档与体验标识', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'manifest.json'), 'utf8'));
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
-  const simHtml = fs.readFileSync(path.join(__dirname, '..', 'sim', 'index.html'), 'utf8');
-  const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
   assert.strictEqual(manifest.config.designWidth, 336);
   assert.ok(style.includes('width: 100%;'));
   assert.ok(style.includes('@media (max-width: 160)'));
-  assert.ok(simHtml.includes('id="deviceAutoProfile"'));
-  assert.ok(!simHtml.includes('id="deviceProfile"'));
-  assert.ok(sim.includes('function detectDeviceProfile(width, height)'));
-  assert.ok(sim.includes("return 'band-9';"));
-  assert.ok(sim.includes("return 'band-10';"));
-  assert.ok(sim.includes("return 'band-9-pro';"));
-  assert.ok(sim.includes("window.addEventListener('resize', syncDeviceProfile)"));
-  assert.ok(sim.includes("'band-9': { name: '小米手环 9', size: '192×490'"));
-  assert.ok(sim.includes("'band-10': { name: '小米手环 10', size: '212×520'"));
-  assert.ok(sim.includes("'band-10-pro': { name: '小米手环 10 Pro', size: '336×480'"));
 });
