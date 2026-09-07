@@ -46,7 +46,7 @@ export default {
   },
 
   onInit() {
-    this.app = this.$app;
+    this.app = this.$app.$def;
     this._unsub = this.app.store.on((what) => {
       if (what === 'settings' || what === 'load') {
         this.settings = Object.assign({}, this.app.store.getState().settings);

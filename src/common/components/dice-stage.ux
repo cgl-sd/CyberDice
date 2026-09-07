@@ -35,6 +35,7 @@ export default {
 <style>
 .dice-area {
   flex: 1;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden;
@@ -54,6 +55,7 @@ export default {
 .result-wrap {
   width: 240px;
   height: 240px;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }

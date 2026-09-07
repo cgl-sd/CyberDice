@@ -91,6 +91,17 @@ test('Vela visual parity: 功能与历史页面使用浏览器版同款页面内
   assert.ok(history.includes('<block if="{{ items.length > 0 }}">'));
 });
 
+test('Vela runtime parity: 页面通过 $app.$def 访问应用单例，列表显式竖排', () => {
+  const pages = ['home', 'dice-select', 'custom', 'history', 'settings', 'theme'];
+  pages.forEach((name) => {
+    const page = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', name, name + '.ux'), 'utf8');
+    assert.ok(page.includes('this.$app.$def'), name + ' 必须从 Vela app 定义对象读取共享状态');
+  });
+  const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
+  assert.ok(/\.list\s*\{[\s\S]*?flex-direction:\s*column;/.test(style));
+  assert.ok(/\.center-box\s*\{[\s\S]*?flex-direction:\s*column;/.test(style));
+});
+
 test('Simulator contract: 本地文件与 HTTP 打开时均使用相对资源和预打包逻辑', () => {
   const simHtml = fs.readFileSync(path.join(__dirname, '..', 'sim', 'index.html'), 'utf8');
   const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');

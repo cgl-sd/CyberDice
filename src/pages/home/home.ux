@@ -52,7 +52,7 @@ export default {
     this._tick = 0;
     this._unsub = null;
     try {
-      this.app = this.$app;
+      this.app = this.$app.$def;
       this._unsub = this.app.store.on((what) => {
         if (what === 'rollState' || what === 'mode' || what === 'settings') {
           this.syncFromStore();

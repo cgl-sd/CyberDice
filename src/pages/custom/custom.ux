@@ -58,7 +58,7 @@ export default {
   },
 
   onInit() {
-    this.app = this.$app;
+    this.app = this.$app.$def;
     // 已是自定义模式时回显
     const mode = this.app.store.getState().mode;
     if (mode && typeof mode === 'object') {
