@@ -8,16 +8,15 @@
 
     <!-- 概念图·关于页面 -->
     <div class="center-box">
-      <image class="about-glyph" src="/common/images/dice/die-5.png"></image>
+      <image class="about-glyph" src="/common/images/dice/ready-reference.png"></image>
       <text class="about-name">CyberDice</text>
-      <text class="about-version">v{{ version }}</text>
-      <text class="about-tagline">Shake. Roll. Anywhere.</text>
+      <text class="about-version">版本 v{{ version }}</text>
+      <text class="about-tagline">摇一摇，随时掷骰</text>
     </div>
   </div>
 </template>
 
 <script>
-const router = require('@system.router');
 const C = require('../../common/scripts/constants.js');
 
 export default {

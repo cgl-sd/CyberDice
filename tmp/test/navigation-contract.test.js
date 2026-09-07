@@ -42,3 +42,15 @@ test('Simulator navigation contract: 控制面板按钮模拟上滑、右滑和�
   assert.ok(sim.includes("if (upward) navigate('history')"));
   assert.ok(!sim.includes("el('historyCard').onclick"));
 });
+
+test('About contract: 使用概念图骰子并完成中文本地化', () => {
+  const about = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'about', 'about.ux'), 'utf8');
+  const simHtml = fs.readFileSync(path.join(__dirname, '..', 'sim', 'index.html'), 'utf8');
+  [about, simHtml].forEach((content) => {
+    assert.ok(content.includes('ready-reference.png'));
+    assert.ok(content.includes('摇一摇，随时掷骰'));
+    assert.ok(!content.includes('Shake. Roll. Anywhere.'));
+  });
+  assert.ok(about.includes('版本 v{{ version }}'));
+  assert.ok(simHtml.includes('版本 v1.1.0'));
+});
