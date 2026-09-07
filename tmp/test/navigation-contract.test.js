@@ -63,3 +63,12 @@ test('Feature contract: 功能页可直接进入关于页', () => {
   assert.ok(selectPage.includes("router.push({ uri: '/pages/about' })"));
   assert.ok(sim.includes("about.onclick = () => navigate('about')"));
 });
+
+test('Simulator contract: 本地文件与 HTTP 打开时均使用相对资源和预打包逻辑', () => {
+  const simHtml = fs.readFileSync(path.join(__dirname, '..', 'sim', 'index.html'), 'utf8');
+  const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
+  assert.ok(simHtml.includes('src="common-bundle.js?v=1"'));
+  assert.ok(!simHtml.includes('src="/src/common/images/'));
+  assert.ok(sim.includes("const ASSET_ROOT = '../../src/common/images/';"));
+  assert.ok(sim.includes('window.CyberDiceModules'));
+});

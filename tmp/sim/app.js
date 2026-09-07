@@ -66,6 +66,10 @@ const registry = {
 const M = {};
 
 async function loadModule(url, key) {
+  if (window.CyberDiceModules && window.CyberDiceModules[key]) {
+    M[key] = window.CyberDiceModules[key];
+    return;
+  }
   const code = await (await fetch(url)).text();
   const module = { exports: {} };
   const fn = new Function('require', 'module', 'exports', code);
@@ -121,9 +125,10 @@ let lastFinal = 5;
 let tick = 0;
 let sensorFallback = false;
 
-const dieSrcOf = (v) => '/src/common/images/dice/die-' + v + '.png';
-const shakeSrcOf = (frame) => '/src/common/images/dice/shake-' + frame + '.png';
-const READY_SRC = '/src/common/images/dice/ready-reference.png';
+const ASSET_ROOT = '../../src/common/images/';
+const dieSrcOf = (v) => ASSET_ROOT + 'dice/die-' + v + '.png';
+const shakeSrcOf = (frame) => ASSET_ROOT + 'dice/shake-' + frame + '.png';
+const READY_SRC = ASSET_ROOT + 'dice/ready-reference.png';
 
 function createApp() {
   const storageAdapter = M['storage-adapter'].createStorageAdapter(browserStorage);
