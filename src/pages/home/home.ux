@@ -1,4 +1,3 @@
-<import name="dice-stage" src="../../common/components/dice-stage.ux"></import>
 <style>
 @import '../../common/styles/style.css';
 </style>
@@ -10,9 +9,22 @@
       <text class="app-name">CyberDice</text>
     </div>
 
-    <!-- 主骰子区域：最大点击热区（FR-008） -->
-    <dice-stage state="{{ rollState }}" die-src="{{ dieSrc }}" jitter="{{ jitter }}"
-      result-num="{{ resultNum }}" result-sub="{{ resultSub }}" onroll="onTapRoll"></dice-stage>
+    <!--
+      主骰子区域：直接使用页面元素，和浏览器模拟器保持同一树结构。
+      Vela 的自定义组件宿主不会自动继承 flex: 1，曾使骰子区域高度为 0。
+    -->
+    <div class="dice-area" onclick="onTapRoll">
+      <block if="{{ rollState === 'RESULT' }}">
+        <div class="result-wrap">
+          <image class="result-ticks" src="/common/images/result-ticks.png"></image>
+          <text class="result-num">{{ resultNum }}</text>
+          <text class="result-sub" show="{{ resultSub !== '' }}">{{ resultSub }}</text>
+        </div>
+      </block>
+      <block if="{{ rollState !== 'RESULT' }}">
+        <image class="{{ jitter ? 'die-img-shake-l' : 'die-img' }}" src="{{ dieSrc }}"></image>
+      </block>
+    </div>
 
     <text class="hint">{{ hint }}</text>
 

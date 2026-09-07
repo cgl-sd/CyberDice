@@ -102,6 +102,15 @@ test('Vela runtime parity: 页面通过 $app.$def 访问应用单例，列表显
   assert.ok(/\.center-box\s*\{[\s\S]*?flex-direction:\s*column;/.test(style));
 });
 
+test('Vela visual parity: 首页骰子舞台与浏览器版一样直接由页面承载', () => {
+  const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
+  assert.ok(home.includes('<div class="dice-area" onclick="onTapRoll">'));
+  assert.ok(home.includes('src="{{ dieSrc }}"'));
+  assert.ok(home.includes('src="/common/images/result-ticks.png"'));
+  assert.ok(!home.includes('<dice-stage'));
+  assert.ok(/\.list-item\s*\{[\s\S]*?height:\s*68px;/.test(style));
+});
+
 test('Simulator contract: 本地文件与 HTTP 打开时均使用相对资源和预打包逻辑', () => {
   const simHtml = fs.readFileSync(path.join(__dirname, '..', 'sim', 'index.html'), 'utf8');
   const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');

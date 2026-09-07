@@ -124,7 +124,8 @@
 }
 
 .list-item {
-  height: 60px;
+  /* 比原始 60px 略高，提升手环触控与文字呼吸感。 */
+  height: 68px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
