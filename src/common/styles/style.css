@@ -283,8 +283,8 @@
   margin-top: 14px;
 }
 
-/* 手环 9 / 10 的水平逻辑宽度为 96 / 106dp；9 Pro / 10 Pro 为 168dp。 */
-@media (max-width: 160) {
+/* 按宽度分两档：小屏约 96~106dp，大屏约 158dp 及以上；120dp 避免密度换算误命中。 */
+@media (max-width: 120) {
   .topbar {
     height: 68px;
     justify-content: center;

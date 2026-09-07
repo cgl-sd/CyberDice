@@ -80,7 +80,7 @@
   color: #6f7178;
 }
 
-@media (max-width: 160) {
+@media (max-width: 120) {
   .page {
     position: relative;
   }

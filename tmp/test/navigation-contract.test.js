@@ -89,8 +89,8 @@ test('Vela visual parity: 首页骰子舞台与浏览器版一样直接由页面
 
 test('Vela responsive contract: 小尺寸手环保留安全区、底部入口和紧凑历史卡片', () => {
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
-  const sharedCompact = style.slice(style.indexOf('@media (max-width: 160)'));
-  const homeCompact = home.slice(home.indexOf('@media (max-width: 160)'));
+  const sharedCompact = style.slice(style.indexOf('@media (max-width: 120)'));
+  const homeCompact = home.slice(home.indexOf('@media (max-width: 120)'));
   assert.ok(sharedCompact.includes('justify-content: center;'));
   assert.ok(/\.home-die-img,[\s\S]*?width:\s*164px;/.test(homeCompact));
   assert.ok(homeCompact.includes('position: absolute;'));
@@ -117,7 +117,7 @@ test('Vela home layout: 首页功能卡使用本页静态 Flex 布局，不依�
   assert.ok(/\.home-function-card\s*\{[\s\S]*?margin:\s*10px 16px 8px 16px;/.test(home));
   assert.ok(!home.includes('transform:'));
   assert.ok(!style.includes('.mode-card'));
-  assert.ok(home.includes('@media (max-width: 160)'));
+  assert.ok(home.includes('@media (max-width: 120)'));
   assert.ok(home.includes('bottom: 64px;'));
   assert.ok(home.includes('margin-bottom: 130px;'));
 });
@@ -128,5 +128,5 @@ test('Multi-device contract: 9、9 Pro、10、10 Pro 均有明确尺寸档与体
   assert.strictEqual(manifest.config.designWidth, 336);
   assert.strictEqual(manifest.package, 'com.cyberdice');
   assert.ok(style.includes('width: 100%;'));
-  assert.ok(style.includes('@media (max-width: 160)'));
+  assert.ok(style.includes('@media (max-width: 120)'));
 });
