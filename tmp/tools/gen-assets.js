@@ -12,8 +12,11 @@
  */
 const { createCanvas, fill, composite, boxBlur, downsample, save } = require('./png.js');
 const path = require('path');
+const fs = require('fs');
+const { spawnSync } = require('child_process');
 
 const OUT = path.join(__dirname, '..', '..', 'src', 'common', 'images');
+const REFERENCE = path.join(__dirname, '..', 'reference', 'design', 'e31c58c5-5586-4229-88c4-8791c72703df.png');
 const SS = 2; // 超采样倍数
 
 const PIP_LAYOUT = {
@@ -227,6 +230,29 @@ function genDieFrames() {
   });
 }
 
+/**
+ * 从用户确认的概念图提取 READY 骰子与摇动残影，保持图案、光照、拖影一比一一致。
+ * 这些是展示资源；随机结果依旧由 DiceEngine 生成，绝不从图片推导。
+ */
+function extractReferenceFrames() {
+  if (!fs.existsSync(REFERENCE)) throw new Error('reference design image is missing: ' + REFERENCE);
+  const diceOut = path.join(OUT, 'dice');
+  const runSips = (args) => {
+    const result = spawnSync('sips', args, { encoding: 'utf8' });
+    if (result.status !== 0) throw new Error('sips failed: ' + (result.stderr || result.stdout));
+  };
+  const extract = (name, height, width, y, x) => {
+    const tmp = path.join(diceOut, '.' + name + '-crop.png');
+    const out = path.join(diceOut, name + '.png');
+    runSips(['-c', String(height), String(width), '--cropOffset', String(y), String(x), REFERENCE, '--out', tmp]);
+    runSips(['-z', '296', '296', tmp, '--out', out]);
+    fs.unlinkSync(tmp);
+  };
+  // 首页静止骰子，以及摇动屏幕中的同一颗骰子和灰色残影。
+  extract('ready-reference', 148, 148, 158, 394);
+  [[151, 668], [148, 664], [154, 671], [150, 667]].forEach(([y, x], i) => extract('shake-' + (i + 1), 168, 168, y, x));
+}
+
 function genIcon() {
   const S = 192;
   const canvas = createCanvas(S * SS, S * SS);
@@ -314,6 +340,7 @@ function genGearGlyph() {
 }
 
 genDieFrames();
+extractReferenceFrames();
 genIcon();
 genResultTicks();
 genDocGlyph();

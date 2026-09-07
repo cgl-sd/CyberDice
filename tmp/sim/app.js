@@ -123,6 +123,7 @@ let sensorFallback = false;
 
 const dieSrcOf = (v) => '/src/common/images/dice/die-' + v + '.png';
 const shakeSrcOf = (frame) => '/src/common/images/dice/shake-' + frame + '.png';
+const READY_SRC = '/src/common/images/dice/ready-reference.png';
 
 function createApp() {
   const storageAdapter = M['storage-adapter'].createStorageAdapter(browserStorage);
@@ -179,7 +180,7 @@ function syncHome() {
     el('resultWrap').style.display = '';
     el('dieImg').style.display = 'none';
     el('resultNum').textContent = r.dice.length === 1 ? String(r.dice[0]) : String(r.total);
-    el('resultSub').textContent = r.dice.length > 1 ? r.dice.join(' + ') + ' =' : '';
+    el('resultSub').textContent = '';
     el('hint').textContent = '点击屏幕 或 摇一摇手腕';
   } else if (st.rollState === 'SHAKING' || st.rollState === 'SETTLING') {
     startAnim();
@@ -188,7 +189,7 @@ function syncHome() {
     stopAnim();
     el('resultWrap').style.display = 'none';
     el('dieImg').style.display = '';
-    el('dieImg').src = dieSrcOf(lastFinal);
+    el('dieImg').src = READY_SRC;
     el('hint').textContent = sensorFallback ? '传感器不可用 · 点击掷骰' : '摇一摇手腕 或 点击掷骰';
   }
 }

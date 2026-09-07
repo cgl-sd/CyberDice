@@ -30,11 +30,12 @@ const router = require('@system.router');
 
 const dieSrcOf = (v) => '/common/images/dice/die-' + v + '.png';
 const shakeSrcOf = (frame) => '/common/images/dice/shake-' + frame + '.png';
+const READY_SRC = '/common/images/dice/ready-reference.png';
 
 export default {
   data: {
     rollState: 'READY',
-    dieSrc: dieSrcOf(5),
+    dieSrc: READY_SRC,
     jitter: false,
     sensorFallback: false,
     hint: '摇一摇手腕 或 点击屏幕',
@@ -128,13 +129,9 @@ export default {
     if (st.rollState === 'RESULT' && st.rollCtx && st.rollCtx.result) {
       this._stopAnim();
       const r = st.rollCtx.result;
-      if (r.dice.length === 1) {
-        this.resultNum = String(r.dice[0]);
-        this.resultSub = '';
-      } else {
-        this.resultNum = String(r.total);
-      this.resultSub = r.dice.join(' + ') + ' =';
-      }
+      // 概念图结果态只保留环中的最终数字，避免在 336×480 上产生次级阅读负担。
+      this.resultNum = String(r.dice.length === 1 ? r.dice[0] : r.total);
+      this.resultSub = '';
       this.dieSrc = dieSrcOf(r.dice[0]);
       this.hint = '点击屏幕 或 摇一摇手腕';
     } else if (st.rollState === 'SHAKING' || st.rollState === 'SETTLING') {
@@ -143,6 +140,7 @@ export default {
     } else {
       this._stopAnim();
       this.jitter = false;
+      this.dieSrc = READY_SRC;
       this.hint = this.sensorFallback ? '传感器不可用 · 点击掷骰' : '摇一摇手腕 或 点击掷骰';
     }
   },
