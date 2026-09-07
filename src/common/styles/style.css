@@ -215,22 +215,17 @@
 .history-mid {
   flex: 1;
   flex-direction: column;
+  justify-content: center;
 }
 
 .history-mode {
   font-size: 20px;
-  color: #2f6bed;
-}
-
-.history-detail {
-  font-size: 18px;
-  color: #9a9ca3;
-  margin-top: 2px;
+  color: #8b9397;
 }
 
 .history-time {
   font-size: 20px;
-  color: #6f7178;
+  color: #8b9397;
 }
 
 /* ---- 空状态 / 关于 ---- */
@@ -325,8 +320,5 @@
     font-size: 18px;
   }
 
-  .history-detail {
-    font-size: 16px;
-  }
 
 }
