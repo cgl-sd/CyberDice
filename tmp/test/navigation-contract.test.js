@@ -4,7 +4,7 @@ const path = require('path');
 
 const home = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'home', 'home.ux'), 'utf8');
 
-test('Navigation contract: 首页仅右滑进入功能入口，左滑和上下滑不绑定应用功能', () => {
+test('Navigation contract: 手环应用首页仅右滑进入功能入口，左滑和上下滑不绑定应用功能', () => {
   assert.ok(home.includes("event.direction === 'right'"));
   assert.ok(!home.includes("event.direction === 'left'"));
   assert.ok(!home.includes("event.direction === 'up'"));
@@ -32,12 +32,11 @@ test('Navigation contract: 页面组件与页面模板不绘制应用内返回�
   });
 });
 
-test('Simulator gesture contract: 上滑历史、右滑功能入口，兼容取消与触屏后备事件', () => {
+test('Simulator navigation contract: 两个首页按钮替代上滑/右滑，左滑仅模拟返回', () => {
   const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
   assert.ok(sim.includes("device.addEventListener('pointercancel', cancelGesture)"));
   assert.ok(sim.includes("device.addEventListener('touchstart', beginGesture"));
-  assert.ok(sim.includes('SWIPE_DIRECTION_RATIO'));
-  assert.ok(sim.includes("if (upward) navigate('history')"));
-  assert.ok(sim.includes("if (horizontal && dx > 0) navigate('dice-select')"));
-  assert.ok(sim.includes('if (horizontal && dx < 0)'));
+  assert.ok(sim.includes("el('modeCard').onclick = () => navigate('dice-select')"));
+  assert.ok(sim.includes("el('historyCard').onclick = () => navigate('history')"));
+  assert.ok(sim.includes('BACK_SWIPE_DISTANCE'));
 });

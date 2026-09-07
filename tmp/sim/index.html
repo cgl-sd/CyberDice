@@ -16,8 +16,6 @@
   /* ===== 复刻 .ux 页面（336×480；比例校准：顶栏52/行60/主字24/骰子148/刻度环240） ===== */
   .screen { position: absolute; inset: 0; display: none; flex-direction: column; background: #000; }
   .screen.active { display: flex; }
-  /* 首页没有原生纵向滚动，交给手势层识别上滑；列表页仍保留其原生纵向滚动。 */
-  #scr-home { touch-action: none; }
 
   .topbar { height: 52px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
   .app-name { font-size: 24px; color: #fff; font-weight: bold; }
@@ -36,7 +34,9 @@
   .hint { height: 32px; font-size: 20px; color: #9a9ca3; text-align: center; flex-shrink: 0; }
   .mode-card { height: 56px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; background: #1c1c21; border-radius: 16px; margin: 10px 16px 16px 16px; padding: 0 20px; cursor: pointer; flex-shrink: 0; }
   .mode-card-label { font-size: 24px; color: #fff; font-weight: bold; }
-  .mode-card-chevron { font-size: 26px; color: #6f7178; }
+  .mode-card-meta { font-size: 20px; color: #9a9ca3; }
+  .history-card { height: 52px; display: flex; align-items: center; justify-content: center; background: #1c1c21; border-radius: 16px; margin: 8px 16px 16px; cursor: pointer; flex-shrink: 0; }
+  .history-card-label { font-size: 22px; color: #fff; }
 
   .list { flex: 1; padding: 4px 16px 16px 16px; overflow-y: auto; scrollbar-width: none; }
   .list::-webkit-scrollbar { display: none; width: 0; height: 0; }
@@ -95,9 +95,10 @@
       </div>
       <div class="hint" id="hint">摇一摇手腕 或 点击屏幕</div>
       <div class="mode-card" id="modeCard">
-        <span class="mode-card-label" id="modeLabel">1D6</span>
-        <span class="mode-card-chevron">›</span>
+        <span class="mode-card-label">功能入口</span>
+        <span class="mode-card-meta" id="modeLabel">1D6</span>
       </div>
+      <div class="history-card" id="historyCard"><span class="history-card-label">历史记录</span></div>
     </div>
 
     <!-- 右滑后的功能入口：骰子模式、设置、历史均以大行呈现。 -->
@@ -212,6 +213,6 @@
     <div id="log"></div>
   </div>
 
-<script src="app.js?v=27"></script>
+<script src="app.js?v=28"></script>
 </body>
 </html>
