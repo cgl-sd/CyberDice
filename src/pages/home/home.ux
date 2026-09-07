@@ -322,9 +322,9 @@ export default {
     if (st.rollState === 'RESULT' && st.rollCtx && st.rollCtx.result) {
       this._stopAnim();
       const r = st.rollCtx.result;
-      // 多骰明确展示每颗点数与总和，避免只显示总值而无法核对。
+      // 结果态保持概念图中的单一大号结果，避免在手环上增加次级阅读负担。
       this.resultNum = String(r.dice.length === 1 ? r.dice[0] : r.total);
-      this.resultSub = r.dice.length > 1 ? r.dice.join(' + ') + ' = ' + r.total : '';
+      this.resultSub = '';
       this.dieSrc = dieSrcOf(r.dice[0]);
       this.hint = '点击屏幕 或 摇一摇手腕';
     } else if (st.rollState === 'SHAKING' || st.rollState === 'SETTLING') {

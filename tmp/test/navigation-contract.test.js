@@ -112,9 +112,8 @@ test('Vela theme contract: 每个主题色使用独立条件节点，不遗留�
   assert.ok(!theme.includes("'background-color:' + $item.color"));
 });
 
-test('P0/P1 contract: 多骰结果可核对、主题在首页生效、离开首页取消未完成掷骰', () => {
+test('P1 contract: 主题在首页生效、离开首页取消未完成掷骰', () => {
   const selectPage = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'dice-select', 'dice-select.ux'), 'utf8');
-  assert.ok(home.includes("r.dice.join(' + ') + ' = ' + r.total"));
   assert.ok(home.includes("accent === 'green'"));
   assert.ok(home.includes("accent === 'purple'"));
   assert.ok(selectPage.includes("accent === 'green'"));
