@@ -81,6 +81,15 @@
 }
 
 @media (max-width: 160) {
+  .page {
+    position: relative;
+  }
+
+  .home-dice-area {
+    /* 为绝对定位的提示与功能入口预留垂直空间，防止 Flex 内容挤出屏幕。 */
+    margin-bottom: 130px;
+  }
+
   .home-die-img,
   .home-die-img-shake {
     width: 164px;
@@ -109,12 +118,20 @@
   .home-hint {
     height: 28px;
     font-size: 17px;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 130px;
   }
 
   .home-function-card {
     height: 58px;
-    /* 胶囊屏保留约 27~30 个物理像素的圆角安全距离。 */
-    margin: 8px 28px 48px 28px;
+    /* 脱离 Flex 内容流，直接锚定在胶囊屏圆角上方的安全区。 */
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    bottom: 64px;
+    margin: 0px;
     padding: 0 16px;
   }
 
