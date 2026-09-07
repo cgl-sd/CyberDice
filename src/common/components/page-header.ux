@@ -11,3 +11,20 @@ export default {
   },
 };
 </script>
+
+<!-- 组件作用域内声明，确保官方 Vela 编译器生成对应样式。 -->
+<style>
+.topbar {
+  height: 52px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.nav-title {
+  font-size: 24px;
+  color: #ffffff;
+  font-weight: bold;
+}
+</style>

@@ -40,7 +40,7 @@ export default {
   },
 
   onInit() {
-    this.app = this.$app();
+    this.app = this.$app;
   },
 
   onShow() {

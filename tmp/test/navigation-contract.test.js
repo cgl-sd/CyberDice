@@ -32,6 +32,22 @@ test('Navigation contract: 页面组件与页面模板不绘制应用内返回�
   });
 });
 
+test('Vela visual parity: 复用组件在自身作用域内声明浏览器版同款关键样式', () => {
+  const components = path.join(__dirname, '..', '..', 'src', 'common', 'components');
+  const diceStage = fs.readFileSync(path.join(components, 'dice-stage.ux'), 'utf8');
+  const pageHeader = fs.readFileSync(path.join(components, 'page-header.ux'), 'utf8');
+  const listRow = fs.readFileSync(path.join(components, 'list-row.ux'), 'utf8');
+  assert.ok(diceStage.includes('<style>'));
+  assert.ok(diceStage.includes('.die-img'));
+  assert.ok(diceStage.includes('width: 148px;'));
+  assert.ok(diceStage.includes('.result-num'));
+  assert.ok(diceStage.includes('font-size: 110px;'));
+  assert.ok(pageHeader.includes('.topbar'));
+  assert.ok(pageHeader.includes('.nav-title'));
+  assert.ok(listRow.includes('.list-item'));
+  assert.ok(listRow.includes('.item-label'));
+});
+
 test('Simulator navigation contract: 控制面板按钮模拟上滑、右滑和左滑', () => {
   const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
   assert.ok(sim.includes("device.addEventListener('pointercancel', cancelGesture)"));

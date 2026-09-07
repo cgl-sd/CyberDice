@@ -5,6 +5,7 @@
   "versionCode": 2,
   "minPlatformVersion": 1090,
   "icon": "/common/images/icon.png",
+  "deviceTypeList": ["watch"],
   "features": [
     { "name": "system.sensor" },
     { "name": "system.vibrator" },

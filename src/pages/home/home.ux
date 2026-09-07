@@ -47,22 +47,35 @@ export default {
   },
 
   onInit() {
-    this.app = this.$app();
     this.sensor = sensorAdapterMod.createSensorAdapter();
     this._animTimer = null;
     this._tick = 0;
-    this._unsub = this.app.store.on((what) => {
-      if (what === 'rollState' || what === 'mode' || what === 'settings') {
-        this.syncFromStore();
-      }
-    });
-    this.syncFromStore();
+    this._unsub = null;
+    try {
+      this.app = this.$app;
+      this._unsub = this.app.store.on((what) => {
+        if (what === 'rollState' || what === 'mode' || what === 'settings') {
+          this.syncFromStore();
+        }
+      });
+      this.syncFromStore();
+    } catch (err) {
+      // 平台的应用级服务不可用时，保留静态首页，避免整屏空白。
+      console.error('home init failed: ' + String(err));
+      this.sensorFallback = true;
+      this.hint = '点击屏幕掷骰';
+    }
   },
 
   onShow() {
     // 恢复前台：重置 Detector 并重新订阅传感器（第 14 节）
-    this.app.detector.reset();
     this.sensorFallback = false;
+    if (!this.app) {
+      this.sensorFallback = true;
+      this.hint = '点击屏幕掷骰';
+      return;
+    }
+    this.app.detector.reset();
     this.sensor.start(
       (s) => this._onSample(s),
       (e) => this._onSensorError(e)
