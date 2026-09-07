@@ -2,7 +2,7 @@
 
 CyberDice 是一款完全离线运行的 Xiaomi Vela JS 摇骰子应用，包名为 `com.cyberdice`，交付物为 RPK。点击屏幕或摇动手腕即可投掷；结果由本地随机逻辑生成，并以动画和震动完成反馈。
 
-![CyberDice UI 设计参考图](00_reference/design/cyberdice-ui-overview.png)
+![CyberDice UI 设计参考图](00_reference/design/cyberdice-ui-reference.png)
 
 这张图是当前视觉实现的设计依据：黑色背景、白色等距骰子、深灰功能卡、蓝色结果刻度和单一大号结果数值。运行时骰子点数、历史和震动反馈均由程序在本地生成，不会把静态设计图中的示例数值写死。
 
@@ -43,4 +43,4 @@ dist/                 本地 RPK 产物（忽略）
 sign/                 本地签名材料（忽略）
 ```
 
-详细实现边界见 [AGENTS.md](AGENTS.md)，需求基线见 [产品需求说明](tmp/reference/Wrist_Dice_小米手环9Pro_产品需求与程序设计说明书.md)，设计原图见 [CyberDice UI 设计参考图](00_reference/design/cyberdice-ui-overview.png)。
+详细实现边界见 [AGENTS.md](AGENTS.md)，需求基线见 [产品需求说明](tmp/reference/Wrist_Dice_小米手环9Pro_产品需求与程序设计说明书.md)，设计原图见 [CyberDice UI 设计参考图](00_reference/design/cyberdice-ui-reference.png)。
