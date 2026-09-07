@@ -16,6 +16,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
+  flex-shrink: 0;
 }
 
 .app-name {
@@ -38,50 +39,51 @@
 /* ---- 首页 ---- */
 .dice-area {
   flex: 1;
+  flex-shrink: 1;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 }
 
 .die-img {
-  width: 148px;
-  height: 148px;
+  width: 184px;
+  height: 184px;
 }
 
 .die-img-shake-l {
-  width: 148px;
-  height: 148px;
-  margin-left: -6px;
+  width: 184px;
+  height: 184px;
+  margin-left: -8px;
 }
 
 .die-img-shake-r {
-  width: 148px;
-  height: 148px;
-  margin-left: 6px;
+  width: 184px;
+  height: 184px;
+  margin-left: 8px;
 }
 
 .result-wrap {
-  width: 240px;
-  height: 240px;
+  width: 276px;
+  height: 276px;
   align-items: center;
   justify-content: center;
 }
 
 .result-ticks {
   position: absolute;
-  width: 240px;
-  height: 240px;
+  width: 276px;
+  height: 276px;
 }
 
 .result-num {
-  font-size: 110px;
+  font-size: 124px;
   color: #ffffff;
   font-weight: bold;
 }
 
 .result-sub {
   position: absolute;
-  margin-top: 118px;
+  margin-top: 136px;
   font-size: 20px;
   color: #9a9ca3;
 }
@@ -91,10 +93,11 @@
   font-size: 20px;
   color: #9a9ca3;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .mode-card {
-  height: 56px;
+  height: 64px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -102,6 +105,7 @@
   border-radius: 16px;
   margin: 10px 16px 16px 16px;
   padding: 0 20px;
+  flex-shrink: 0;
 }
 
 .mode-card-label {
@@ -349,20 +353,98 @@
   margin-top: 14px;
 }
 
-/* 手环 9、10 为胶囊屏：收紧横向边距，避免列表卡片贴近圆角安全区。 */
+/* 手环 9、10 为胶囊屏：避开圆角安全区，同时为底部模式入口预留固定空间。 */
 @media screen and (shape: pill-shaped) {
   .topbar {
-    padding-left: 16px;
-    padding-right: 16px;
+    height: 68px;
+    justify-content: center;
+    padding: 8px 36px 0 36px;
+  }
+
+  .app-name {
+    font-size: 22px;
+  }
+
+  .dice-area {
+    min-height: 0;
+  }
+
+  .die-img,
+  .die-img-shake-l,
+  .die-img-shake-r {
+    width: 164px;
+    height: 164px;
+  }
+
+  .die-img-shake-l {
+    margin-left: -7px;
+  }
+
+  .die-img-shake-r {
+    margin-left: 7px;
+  }
+
+  .result-wrap,
+  .result-ticks {
+    width: 224px;
+    height: 224px;
+  }
+
+  .result-num {
+    font-size: 106px;
+  }
+
+  .result-sub {
+    margin-top: 108px;
+    font-size: 18px;
+  }
+
+  .hint {
+    height: 28px;
+    font-size: 17px;
   }
 
   .list {
-    padding-left: 12px;
-    padding-right: 12px;
+    padding: 4px 28px 14px 28px;
+  }
+
+  .list-item {
+    height: 64px;
+    margin-bottom: 8px;
+    padding: 0 16px;
+  }
+
+  .history-item {
+    height: 64px;
+    margin-bottom: 8px;
+    padding: 0 16px;
+  }
+
+  .item-label {
+    font-size: 22px;
+  }
+
+  .history-value {
+    font-size: 30px;
+    width: 58px;
+  }
+
+  .history-mode,
+  .history-time {
+    font-size: 18px;
+  }
+
+  .history-detail {
+    font-size: 16px;
   }
 
   .mode-card {
-    margin-left: 12px;
-    margin-right: 12px;
+    height: 58px;
+    margin: 8px 28px 14px 28px;
+    padding: 0 16px;
+  }
+
+  .mode-card-label {
+    font-size: 22px;
   }
 }

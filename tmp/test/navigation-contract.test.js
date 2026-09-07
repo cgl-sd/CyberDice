@@ -117,8 +117,20 @@ test('Vela visual parity: 首页骰子舞台与浏览器版一样直接由页面
   assert.ok(home.includes('src="{{ dieSrc }}"'));
   assert.ok(home.includes('src="/common/images/result-ticks.png"'));
   assert.ok(!home.includes('<dice-stage'));
+  assert.ok(/\.die-img\s*\{[\s\S]*?width:\s*184px;/.test(style));
+  assert.ok(/\.result-wrap\s*\{[\s\S]*?width:\s*276px;/.test(style));
   assert.ok(/\.list-item\s*\{[\s\S]*?height:\s*76px;/.test(style));
   assert.ok(/\.list\s*\{[\s\S]*?overflow:\s*scroll;/.test(style));
+});
+
+test('Vela responsive contract: 胶囊屏保留安全区、底部入口和紧凑历史卡片', () => {
+  const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
+  const pill = style.slice(style.indexOf('@media screen and (shape: pill-shaped)'));
+  assert.ok(pill.includes('justify-content: center;'));
+  assert.ok(/\.die-img,[\s\S]*?width:\s*164px;/.test(pill));
+  assert.ok(pill.includes('height: 58px;'));
+  assert.ok(pill.includes('.history-item'));
+  assert.ok(pill.includes('height: 64px;'));
 });
 
 test('Simulator contract: 本地文件与 HTTP 打开时均使用相对资源和预打包逻辑', () => {
