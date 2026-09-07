@@ -16,6 +16,7 @@ const C = require('./constants.js');
 const DEFAULTS = {
   tapRollMs: C.ROLL.TAP_ROLL_MS,
   shakeMinRollMs: C.ROLL.SHAKE_MIN_ROLL_MS,
+  shakeMaxRollMs: C.ROLL.SHAKE_MAX_ROLL_MS,
   settlingMs: C.SHAKE.SETTLING_MS,
   resultMs: C.ROLL.RESULT_MS,
 };
@@ -39,6 +40,9 @@ function createRollController(opts) {
   let settleTimer = null;
   let resultTimer = null;
   let tapTimer = null;
+  let maxRollTimer = null;
+  let shakeActive = false;
+  let waitForQuiet = false;
 
   function transition(next, ctx) {
     state = next;
@@ -46,6 +50,10 @@ function createRollController(opts) {
   }
 
   function clearTimers() {
+    if (maxRollTimer !== null) {
+      clearTimeoutFn(maxRollTimer);
+      maxRollTimer = null;
+    }
     if (settleTimer) {
       clearTimeoutFn(settleTimer);
       settleTimer = null;
@@ -65,12 +73,20 @@ function createRollController(opts) {
   }
 
   function startRoll(src) {
-    if (isBusy()) {
+    if (isBusy() || (src === 'shake' && waitForQuiet)) {
       return false; // 防重入 / 冷却
     }
     source = src;
     rollStartedAt = now();
     transition(C.STATE_SHAKING, { source: src });
+    if (src === 'shake') {
+      shakeActive = true;
+      maxRollTimer = setTimeoutFn(function () {
+        maxRollTimer = null;
+        waitForQuiet = shakeActive;
+        finishRoll();
+      }, cfg.shakeMaxRollMs);
+    }
     if (src === 'tap') {
       // 点击触发：固定动画时长后自动收束
       tapTimer = setTimeoutFn(function () {
@@ -95,6 +111,10 @@ function createRollController(opts) {
   }
 
   function finishRoll() {
+    if (state !== C.STATE_SHAKING && state !== C.STATE_SETTLING) {
+      return;
+    }
+    clearTimers();
     const result = diceEngine.roll(mode); // 最终结果只生成一次
     lastResult = result;
     transition(C.STATE_RESULT, { result: result, source: source });
@@ -122,7 +142,11 @@ function createRollController(opts) {
 
   /** Detector 发出 SHAKE_START */
   function onShakeStart() {
-    if (state === C.STATE_SETTLING) {
+    shakeActive = true;
+    if (waitForQuiet) {
+      return false;
+    }
+    if (state === C.STATE_SETTLING && source === 'shake') {
       // SETTLING 去抖期间重新出现强运动 -> 回到 SHAKING
       if (settleTimer) {
         clearTimeoutFn(settleTimer);
@@ -136,6 +160,8 @@ function createRollController(opts) {
 
   /** Detector 发出 SHAKE_END */
   function onShakeEnd() {
+    shakeActive = false;
+    waitForQuiet = false;
     if (state !== C.STATE_SHAKING || source !== 'shake') {
       return false;
     }
@@ -180,6 +206,8 @@ function createRollController(opts) {
   /** 页面销毁时清理定时器，避免幽灵回调 */
   function destroy() {
     clearTimers();
+    shakeActive = false;
+    waitForQuiet = false;
     state = C.STATE_READY;
   }
 

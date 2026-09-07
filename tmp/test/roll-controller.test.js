@@ -22,6 +22,69 @@ function makeController(clock, extra) {
   return mod.createRollController(opts);
 }
 
+test('RollController: 持续摇动 3 秒只结算一次，停稳后才重新触发', function () {
+  const clock = createFakeClock();
+  const fb = makeFeedback();
+  let rolls = 0;
+  const c = makeController(clock, {
+    feedback: fb,
+    diceEngine: { roll: function () { rolls += 1; return { dice: [3], total: 3 }; } },
+  });
+  c.onShakeStart();
+  clock.advance(2999);
+  assert.strictEqual(rolls, 0);
+  clock.advance(1);
+  assert.strictEqual(c.getState(), 'RESULT');
+  assert.strictEqual(rolls, 1);
+  assert.strictEqual(fb.count, 1);
+  clock.advance(1000);
+  assert.strictEqual(c.onShakeStart(), false);
+  assert.strictEqual(c.trigger('shake'), false);
+  clock.advance(10000);
+  assert.strictEqual(rolls, 1);
+  c.onShakeEnd();
+  assert.strictEqual(c.onShakeStart(), true);
+  clock.advance(3000);
+  assert.strictEqual(rolls, 2);
+});
+
+test('RollController: 重新摇动不延长上限，截止时取消待执行的收束回调', function () {
+  const clock = createFakeClock();
+  const fb = makeFeedback();
+  const c = makeController(clock, { feedback: fb });
+  c.onShakeStart();
+  clock.advance(2700);
+  c.onShakeEnd();
+  clock.advance(100);
+  c.onShakeStart();
+  clock.advance(100);
+  c.onShakeEnd();
+  clock.advance(100);
+  assert.strictEqual(c.getState(), 'RESULT');
+  clock.advance(100);
+  assert.strictEqual(fb.count, 1);
+  clock.advance(900);
+  assert.strictEqual(c.onShakeStart(), true, '截止前已停稳，可开始新的摇动');
+  c.destroy();
+  clock.advance(5000);
+  assert.strictEqual(fb.count, 1);
+  assert.strictEqual(clock.pendingCount(), 0);
+});
+
+test('RollController: 强制结算后冷却期间停稳可解锁，点击仍可独立触发', function () {
+  const clock = createFakeClock();
+  const c = makeController(clock);
+  c.onShakeStart();
+  clock.advance(3000);
+  c.onShakeEnd();
+  clock.advance(1000);
+  assert.strictEqual(c.onShakeStart(), true);
+  clock.advance(4000);
+  assert.strictEqual(c.trigger('tap'), true);
+  clock.advance(700);
+  assert.strictEqual(c.getState(), 'RESULT');
+});
+
 test('RollController: 点击触发完整流程 READY→SHAKING→SETTLING→RESULT→READY', function () {
   const clock = createFakeClock();
   const states = [];
