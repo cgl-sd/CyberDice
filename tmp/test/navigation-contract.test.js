@@ -74,10 +74,21 @@ test('About contract: 使用概念图骰子并完成中文本地化', () => {
 test('Feature contract: 功能页可直接进入关于页', () => {
   const selectPage = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'dice-select', 'dice-select.ux'), 'utf8');
   const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
-  assert.ok(selectPage.includes('<page-header title="功能"></page-header>'));
-  assert.ok(selectPage.includes('label="关于" chevron="true" onactivate="goAbout"'));
+  assert.ok(selectPage.includes('<text class="nav-title">功能</text>'));
+  assert.ok(selectPage.includes('<text class="item-label">关于</text>'));
   assert.ok(selectPage.includes("router.push({ uri: '/pages/about' })"));
   assert.ok(sim.includes("about.onclick = () => navigate('about')"));
+});
+
+test('Vela visual parity: 功能与历史页面使用浏览器版同款页面内卡片和条件结构', () => {
+  const selectPage = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'dice-select', 'dice-select.ux'), 'utf8');
+  const history = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'history', 'history.ux'), 'utf8');
+  ['偏好设置', '历史记录', '关于'].forEach((label) => {
+    assert.ok(selectPage.includes('<text class="item-label">' + label + '</text>'));
+  });
+  assert.ok(!selectPage.includes('<list-row'));
+  assert.ok(history.includes('<block if="{{ items.length === 0 }}">'));
+  assert.ok(history.includes('<block if="{{ items.length > 0 }}">'));
 });
 
 test('Simulator contract: 本地文件与 HTTP 打开时均使用相对资源和预打包逻辑', () => {

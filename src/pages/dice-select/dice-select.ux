@@ -1,12 +1,13 @@
-<import name="page-header" src="../../common/components/page-header.ux"></import>
-<import name="list-row" src="../../common/components/list-row.ux"></import>
 <style>
 @import '../../common/styles/style.css';
 </style>
 
 <template>
   <div class="page">
-    <page-header title="功能"></page-header>
+    <!-- 与浏览器模拟器保持同一层级：标题和所有功能入口都是页面自身的直接子元素。 -->
+    <div class="topbar">
+      <text class="nav-title">功能</text>
+    </div>
 
     <div class="list">
       <div class="list-item" for="{{ presets }}" onclick="selectPreset($item)">
@@ -21,15 +22,23 @@
           <text class="check-glyph" show="{{ isCustom }}">✓</text>
         </div>
       </div>
-      <list-row label="偏好设置" chevron="true" onactivate="goSettings"></list-row>
-      <list-row label="历史记录" chevron="true" onactivate="goHistory"></list-row>
-      <list-row label="关于" chevron="true" onactivate="goAbout"></list-row>
+      <div class="list-item" onclick="goSettings">
+        <text class="item-label">偏好设置</text>
+        <text class="item-chevron">›</text>
+      </div>
+      <div class="list-item" onclick="goHistory">
+        <text class="item-label">历史记录</text>
+        <text class="item-chevron">›</text>
+      </div>
+      <div class="list-item" onclick="goAbout">
+        <text class="item-label">关于</text>
+        <text class="item-chevron">›</text>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-const diceEngine = require('../../common/scripts/dice-engine.js');
 const router = require('@system.router');
 
 export default {
