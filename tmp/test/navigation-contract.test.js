@@ -31,3 +31,11 @@ test('Navigation contract: 页面组件与页面模板不绘制应用内返回�
     });
   });
 });
+
+test('Simulator gesture contract: 右滑有方向锁定，并兼容取消与触屏后备事件', () => {
+  const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
+  assert.ok(sim.includes("device.addEventListener('pointercancel', cancelGesture)"));
+  assert.ok(sim.includes("device.addEventListener('touchstart', beginGesture"));
+  assert.ok(sim.includes('SWIPE_DIRECTION_RATIO'));
+  assert.ok(sim.includes('dx < SWIPE_DISTANCE'));
+});

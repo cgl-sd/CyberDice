@@ -313,12 +313,17 @@ function renderTheme() {
 
 // ---- 传感器信号注入 ----
 let waveFn = null, waveStart = 0, waveDur = 0, waveLabel = '', waveI = 0;
+let feedUntil = 0;
+const FEED_INTERVAL_MS = 20;
+const STARTUP_CALIBRATION_MS = 700;
+const POST_WAVE_IDLE_MS = 420;
 
 function idleSample() {
   return { x: 0, y: 0, z: 9.8 + Math.sin(Math.random() * 6) * 0.2 };
 }
 
-function startFeed() {
+function startFeed(durationMs) {
+  feedUntil = Math.max(feedUntil, Date.now() + durationMs);
   if (feedTimer) return;
   feedTimer = setInterval(() => {
     if (!mockSensor.handler) return;
@@ -334,7 +339,15 @@ function startFeed() {
       v = idleSample();
     }
     mockSensor.handler.success({ x: v.x, y: v.y, z: v.z });
-  }, 20);
+    // 浏览器模拟不需要像真机一样永久采样；校准/手势后的静止样本足够驱动状态机。
+    if (!waveFn && Date.now() >= feedUntil) stopFeed();
+  }, FEED_INTERVAL_MS);
+}
+
+function stopFeed() {
+  if (feedTimer) clearInterval(feedTimer);
+  feedTimer = null;
+  feedUntil = 0;
 }
 
 function injectWave(fn, durationMs, label) {
@@ -348,6 +361,7 @@ function injectWave(fn, durationMs, label) {
   waveDur = durationMs;
   waveLabel = label;
   waveI = 0;
+  startFeed(durationMs + POST_WAVE_IDLE_MS);
 }
 
 function onSample(s) {
@@ -370,6 +384,8 @@ function onSensorError(e) {
 // ---- 生命周期 ----
 function onHide() {
   stopAnim();
+  stopFeed();
+  waveFn = null;
   sensorAdapter.stop();
   log('onHide: 传感器已退订');
 }
@@ -377,6 +393,8 @@ function onShow() {
   detector.reset();
   sensorFallback = false;
   sensorAdapter.start(onSample, onSensorError);
+  // 为 ShakeDetector 的启动稳定窗口提供有限的静止基线样本，然后停止空闲轮询。
+  startFeed(STARTUP_CALIBRATION_MS);
   log('onShow: 重新订阅');
   syncHome();
 }
@@ -446,16 +464,45 @@ async function main() {
   el('settingVibration').onclick = () => store.setSetting('vibration', !store.getState().settings.vibration);
   el('settingAnimation').onclick = () => store.setSetting('animation', !store.getState().settings.animation);
 
-  // 与真机页面 onswipe 对齐：左滑交给系统返回；首页仅右滑打开功能入口。
-  let swipeStartX = null;
-  el('device').addEventListener('pointerdown', (event) => { swipeStartX = event.clientX; });
-  el('device').addEventListener('pointerup', (event) => {
-    if (stack[stack.length - 1] !== 'home' || controller.isBusy() || swipeStartX === null) return;
-    const dx = event.clientX - swipeStartX;
-    swipeStartX = null;
-    if (Math.abs(dx) >= 60) suppressTapUntil = Date.now() + 350;
-    if (dx >= 60) navigate('dice-select');
-  });
+  // 首页手势：右滑打开功能入口；左滑交给系统；上下滑保持页面/列表原生行为。
+  const device = el('device');
+  const SWIPE_DISTANCE = 56;
+  const SWIPE_DIRECTION_RATIO = 1.2;
+  let gesture = null;
+  const pointOf = (event) => {
+    const touch = event.changedTouches && event.changedTouches[0];
+    return touch ? { x: touch.clientX, y: touch.clientY } : { x: event.clientX, y: event.clientY };
+  };
+  const beginGesture = (event) => {
+    const p = pointOf(event);
+    if (typeof p.x !== 'number') return;
+    gesture = { x: p.x, y: p.y };
+  };
+  const endGesture = (event) => {
+    if (!gesture) return;
+    const start = gesture;
+    gesture = null;
+    if (stack[stack.length - 1] !== 'home' || controller.isBusy()) return;
+    const p = pointOf(event);
+    const dx = p.x - start.x;
+    const dy = p.y - start.y;
+    // 方向锁定可避免纵向列表滚动或斜向点按误触发右滑。
+    if (dx < SWIPE_DISTANCE || Math.abs(dx) < Math.abs(dy) * SWIPE_DIRECTION_RATIO) return;
+    suppressTapUntil = Date.now() + 350;
+    navigate('dice-select');
+  };
+  const cancelGesture = () => { gesture = null; };
+  if (window.PointerEvent) {
+    device.addEventListener('pointerdown', beginGesture);
+    device.addEventListener('pointerup', endGesture);
+    device.addEventListener('pointercancel', cancelGesture);
+  } else {
+    device.addEventListener('touchstart', beginGesture, { passive: true });
+    device.addEventListener('touchend', endGesture, { passive: true });
+    device.addEventListener('touchcancel', cancelGesture, { passive: true });
+    device.addEventListener('mousedown', beginGesture);
+    device.addEventListener('mouseup', endGesture);
+  }
 
   // 信号注入
   el('btnShake').onclick = () => {
@@ -498,7 +545,6 @@ async function main() {
   });
 
   onShow();
-  startFeed();
   syncHome();
   log('CyberDice 模拟器就绪');
 }
