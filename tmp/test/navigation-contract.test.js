@@ -32,11 +32,13 @@ test('Navigation contract: 页面组件与页面模板不绘制应用内返回�
   });
 });
 
-test('Simulator navigation contract: 两个首页按钮替代上滑/右滑，左滑仅模拟返回', () => {
+test('Simulator navigation contract: 控制面板按钮模拟上滑、右滑和左滑', () => {
   const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
   assert.ok(sim.includes("device.addEventListener('pointercancel', cancelGesture)"));
   assert.ok(sim.includes("device.addEventListener('touchstart', beginGesture"));
-  assert.ok(sim.includes("el('modeCard').onclick = () => navigate('dice-select')"));
-  assert.ok(sim.includes("el('historyCard').onclick = () => navigate('history')"));
-  assert.ok(sim.includes('BACK_SWIPE_DISTANCE'));
+  assert.ok(sim.includes("el('btnSwipeUp').onclick = () => routeSwipe(0, -SWIPE_DISTANCE)"));
+  assert.ok(sim.includes("el('btnSwipeRight').onclick = () => routeSwipe(SWIPE_DISTANCE, 0)"));
+  assert.ok(sim.includes("el('btnSwipeLeft').onclick = () => routeSwipe(-SWIPE_DISTANCE, 0)"));
+  assert.ok(sim.includes("if (upward) navigate('history')"));
+  assert.ok(!sim.includes("el('historyCard').onclick"));
 });

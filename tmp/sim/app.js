@@ -423,7 +423,6 @@ async function main() {
     controller.trigger('tap');
   };
   el('modeCard').onclick = () => navigate('dice-select');
-  el('historyCard').onclick = () => navigate('history');
   document.querySelectorAll('[data-nav]').forEach((b) => {
     if (!b.classList.contains('util-btn')) {
       b.onclick = () => navigate(b.getAttribute('data-nav'));
@@ -463,9 +462,10 @@ async function main() {
   el('settingVibration').onclick = () => store.setSetting('vibration', !store.getState().settings.vibration);
   el('settingAnimation').onclick = () => store.setSetting('animation', !store.getState().settings.animation);
 
-  // 左滑仅模拟系统返回；功能导航改由首页的大触控按钮完成。
+  // 首页手势：上滑查看历史、右滑打开功能入口；左滑模拟系统返回。
   const device = el('device');
-  const BACK_SWIPE_DISTANCE = 56;
+  const SWIPE_DISTANCE = 56;
+  const SWIPE_DIRECTION_RATIO = 1.2;
   let gesture = null;
   const pointOf = (event) => {
     const touch = event.changedTouches && event.changedTouches[0];
@@ -476,19 +476,26 @@ async function main() {
     if (typeof p.x !== 'number') return;
     gesture = { x: p.x, y: p.y };
   };
+  const routeSwipe = (dx, dy) => {
+    if (controller.isBusy()) return;
+    const horizontal = Math.abs(dx) >= SWIPE_DISTANCE && Math.abs(dx) >= Math.abs(dy) * SWIPE_DIRECTION_RATIO;
+    const upward = -dy >= SWIPE_DISTANCE && Math.abs(dy) >= Math.abs(dx) * SWIPE_DIRECTION_RATIO;
+    if (horizontal && dx < 0) {
+      // 子页面回退；首页交给宿主浏览器/系统处理退出。
+      if (stack.length > 1) goBack();
+      return;
+    }
+    if (stack[stack.length - 1] !== 'home') return;
+    if (!horizontal && !upward) return;
+    if (upward) navigate('history');
+    if (horizontal && dx > 0) navigate('dice-select');
+  };
   const endGesture = (event) => {
     if (!gesture) return;
     const start = gesture;
     gesture = null;
     const p = pointOf(event);
-    const dx = p.x - start.x;
-    const dy = p.y - start.y;
-    const leftward = -dx >= BACK_SWIPE_DISTANCE && Math.abs(dx) >= Math.abs(dy) * 1.2;
-    if (leftward) {
-      // 子页面回退；首页交给宿主浏览器/系统处理退出。
-      if (stack.length > 1) goBack();
-      return;
-    }
+    routeSwipe(p.x - start.x, p.y - start.y);
   };
   const cancelGesture = () => { gesture = null; };
   if (window.PointerEvent) {
@@ -502,6 +509,11 @@ async function main() {
     device.addEventListener('mousedown', beginGesture);
     device.addEventListener('mouseup', endGesture);
   }
+
+  // 控制面板直接复用同一套手势路由，方便桌面浏览器测试。
+  el('btnSwipeUp').onclick = () => routeSwipe(0, -SWIPE_DISTANCE);
+  el('btnSwipeRight').onclick = () => routeSwipe(SWIPE_DISTANCE, 0);
+  el('btnSwipeLeft').onclick = () => routeSwipe(-SWIPE_DISTANCE, 0);
 
   // 信号注入
   el('btnShake').onclick = () => {

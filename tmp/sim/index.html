@@ -34,9 +34,7 @@
   .hint { height: 32px; font-size: 20px; color: #9a9ca3; text-align: center; flex-shrink: 0; }
   .mode-card { height: 56px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; background: #1c1c21; border-radius: 16px; margin: 10px 16px 16px 16px; padding: 0 20px; cursor: pointer; flex-shrink: 0; }
   .mode-card-label { font-size: 24px; color: #fff; font-weight: bold; }
-  .mode-card-meta { font-size: 20px; color: #9a9ca3; }
-  .history-card { height: 52px; display: flex; align-items: center; justify-content: center; background: #1c1c21; border-radius: 16px; margin: 8px 16px 16px; cursor: pointer; flex-shrink: 0; }
-  .history-card-label { font-size: 22px; color: #fff; }
+  .mode-card-chevron { font-size: 26px; color: #6f7178; }
 
   .list { flex: 1; padding: 4px 16px 16px 16px; overflow-y: auto; scrollbar-width: none; }
   .list::-webkit-scrollbar { display: none; width: 0; height: 0; }
@@ -95,10 +93,9 @@
       </div>
       <div class="hint" id="hint">摇一摇手腕 或 点击屏幕</div>
       <div class="mode-card" id="modeCard">
-        <span class="mode-card-label">功能入口</span>
-        <span class="mode-card-meta" id="modeLabel">1D6</span>
+        <span class="mode-card-label" id="modeLabel">1D6</span>
+        <span class="mode-card-chevron">›</span>
       </div>
-      <div class="history-card" id="historyCard"><span class="history-card-label">历史记录</span></div>
     </div>
 
     <!-- 右滑后的功能入口：骰子模式、设置、历史均以大行呈现。 -->
@@ -200,6 +197,9 @@
     <div>复用 <code>src/common/scripts/*.js</code> 真实逻辑模块，UI 复刻概念图 7 屏。</div>
     <h2>交互</h2>
     <div>
+      <button id="btnSwipeUp">模拟上滑：历史</button>
+      <button id="btnSwipeRight">模拟右滑：功能</button>
+      <button id="btnSwipeLeft">模拟左滑：返回</button>
       <button id="btnShake">模拟摇腕掷骰</button>
       <button id="btnWalk">模拟步行 5 秒（不应触发）</button>
       <button id="btnLift">模拟抬腕看时间（不应触发）</button>
@@ -213,6 +213,6 @@
     <div id="log"></div>
   </div>
 
-<script src="app.js?v=28"></script>
+<script src="app.js?v=30"></script>
 </body>
 </html>
