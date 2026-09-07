@@ -9,28 +9,34 @@
     </div>
 
     <div class="list">
-      <div class="list-item" for="{{ options }}" onclick="pick($item.key)">
-        <text class="item-label">{{ $item.name }}</text>
-        <div class="{{ settings.accent === $item.key ? 'check-circle' : 'check-ring' }}"
-             style="{{ settings.accent === $item.key ? 'background-color:' + $item.color : '' }}">
-          <text class="check-glyph" show="{{ settings.accent === $item.key }}">✓</text>
-        </div>
+      <div class="list-item" onclick="pickBlue">
+        <text class="item-label">科技蓝</text>
+        <block if="{{ settings.accent === 'blue' }}">
+          <div class="check-circle theme-blue"><text class="check-glyph">✓</text></div>
+        </block>
+        <block if="{{ settings.accent !== 'blue' }}"><div class="check-ring"></div></block>
+      </div>
+      <div class="list-item" onclick="pickGreen">
+        <text class="item-label">极客绿</text>
+        <block if="{{ settings.accent === 'green' }}">
+          <div class="check-circle theme-green"><text class="check-glyph">✓</text></div>
+        </block>
+        <block if="{{ settings.accent !== 'green' }}"><div class="check-ring"></div></block>
+      </div>
+      <div class="list-item" onclick="pickPurple">
+        <text class="item-label">赛博紫</text>
+        <block if="{{ settings.accent === 'purple' }}">
+          <div class="check-circle theme-purple"><text class="check-glyph">✓</text></div>
+        </block>
+        <block if="{{ settings.accent !== 'purple' }}"><div class="check-ring"></div></block>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-const router = require('@system.router');
-const storeMod = require('../../common/scripts/store.js');
-
 export default {
   data: {
-    options: [
-      { key: 'blue', name: '科技蓝', color: '#2f6bed' },
-      { key: 'green', name: '极客绿', color: '#2fbf6b' },
-      { key: 'purple', name: '赛博紫', color: '#8a5cf6' },
-    ],
     settings: { vibration: true, animation: true, accent: 'blue' },
   },
 
@@ -56,6 +62,10 @@ export default {
   pick(key) {
     this.app.store.setSetting('accent', key);
   },
+
+  pickBlue() { this.pick('blue'); },
+  pickGreen() { this.pick('green'); },
+  pickPurple() { this.pick('purple'); },
 
 };
 </script>

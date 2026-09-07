@@ -97,14 +97,14 @@
 }
 
 .mode-card {
-  /* 矩形大屏保留原始位置与尺寸；小屏尺寸在媒体查询中单独覆盖。 */
+  /* 矩形大屏下移 10px；小屏位置在媒体查询中单独覆盖。 */
   height: 56px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   background-color: #1c1c21;
   border-radius: 16px;
-  margin: 10px 16px 16px 16px;
+  margin: 10px 16px 6px 16px;
   padding: 0 20px;
   flex-shrink: 0;
 }
@@ -158,6 +158,19 @@
   background-color: #2f6bed;
   align-items: center;
   justify-content: center;
+}
+
+/* 主题页采用静态颜色类，避免 Vela 复用循环节点后保留上一项的内联颜色。 */
+.theme-blue {
+  background-color: #2f6bed;
+}
+
+.theme-green {
+  background-color: #2fbf6b;
+}
+
+.theme-purple {
+  background-color: #8a5cf6;
 }
 
 .check-glyph {

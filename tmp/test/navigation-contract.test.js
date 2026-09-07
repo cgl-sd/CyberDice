@@ -96,6 +96,26 @@ test('Vela responsive contract: 小尺寸手环保留安全区、底部入口和
   assert.ok(compact.includes('height: 76px;'));
 });
 
+test('Vela theme contract: 每个主题色使用独立条件节点，不遗留蓝色选择态', () => {
+  const theme = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'theme', 'theme.ux'), 'utf8');
+  ['blue', 'green', 'purple'].forEach((accent) => {
+    assert.ok(theme.includes("settings.accent === '" + accent + "'"));
+    assert.ok(theme.includes("settings.accent !== '" + accent + "'"));
+  });
+  ['pickBlue', 'pickGreen', 'pickPurple'].forEach((handler) => {
+    assert.ok(theme.includes('onclick="' + handler + '"'));
+  });
+  assert.ok(!theme.includes('for="{{ options }}"'));
+  assert.ok(!theme.includes("'background-color:' + $item.color"));
+});
+
+test('Vela large-screen contract: 首页功能卡下移但不影响小屏安全距离', () => {
+  const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
+  assert.ok(/\.mode-card\s*\{[\s\S]*?margin:\s*10px 16px 6px 16px;/.test(style));
+  const compact = style.slice(style.indexOf('@media (max-width: 160)'));
+  assert.ok(compact.includes('margin: 8px 28px 80px 28px;'));
+});
+
 test('Multi-device contract: 9、9 Pro、10、10 Pro 均有明确尺寸档与体验标识', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'manifest.json'), 'utf8'));
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
