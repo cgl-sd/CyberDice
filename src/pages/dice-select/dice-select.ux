@@ -41,10 +41,6 @@
         <text class="item-label">偏好设置</text>
         <text class="item-chevron">›</text>
       </div>
-      <div class="list-item" onclick="goHistory">
-        <text class="item-label">历史记录</text>
-        <text class="item-chevron">›</text>
-      </div>
       <div class="list-item" onclick="goAbout">
         <text class="item-label">关于</text>
         <text class="item-chevron">›</text>
@@ -106,10 +102,6 @@ export default {
 
   goSettings() {
     router.push({ uri: '/pages/settings' });
-  },
-
-  goHistory() {
-    router.push({ uri: '/pages/history' });
   },
 
   goAbout() {

@@ -72,21 +72,24 @@ test('About contract: 使用概念图骰子并完成中文本地化', () => {
   assert.ok(simHtml.includes('版本 v1.1.0'));
 });
 
-test('Feature contract: 功能页可直接进入关于页', () => {
+test('Feature contract: 功能页保留关于入口，历史记录仅由首页上滑进入', () => {
   const selectPage = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'dice-select', 'dice-select.ux'), 'utf8');
   const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
   assert.ok(selectPage.includes('<text class="nav-title">功能</text>'));
   assert.ok(selectPage.includes('<text class="item-label">关于</text>'));
   assert.ok(selectPage.includes("router.push({ uri: '/pages/about' })"));
+  assert.ok(!selectPage.includes('<text class="item-label">历史记录</text>'));
+  assert.ok(!selectPage.includes('goHistory()'));
   assert.ok(sim.includes("about.onclick = () => navigate('about')"));
 });
 
 test('Vela visual parity: 功能与历史页面使用浏览器版同款页面内卡片和条件结构', () => {
   const selectPage = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'dice-select', 'dice-select.ux'), 'utf8');
   const history = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'history', 'history.ux'), 'utf8');
-  ['偏好设置', '历史记录', '关于'].forEach((label) => {
+  ['偏好设置', '关于'].forEach((label) => {
     assert.ok(selectPage.includes('<text class="item-label">' + label + '</text>'));
   });
+  assert.ok(!selectPage.includes('<text class="item-label">历史记录</text>'));
   assert.ok(!selectPage.includes('<list-row'));
   ['selectD6', 'select2D6', 'select3D6', 'selectD20'].forEach((handler) => {
     assert.ok(selectPage.includes('onclick="' + handler + '"'));
