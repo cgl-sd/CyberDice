@@ -8,8 +8,9 @@ CyberDice 是面向小米手环 9、9 Pro、10、10 Pro 的 Vela JS 快应用，
 - `src/pages/` 放路由页面；当前页面直接承载 UI，不保留未使用的组件层。
 - `src/common/images/` 是随 RPK 发布的图片；`src/common/styles/` 是共享样式；`src/common/scripts/` 是 JavaScript 模块。
 - `src/i18n/` 预留本地化资源；接入前不要让未使用的翻译文件替代现有界面文案。
+- `00_reference/design/` 存放已确认的 UI 设计参考图；只作为视觉依据，不参与 RPK 打包。
 - `build/`、`dist/`、`sign/` 只存本地构建、成品和凭据，不提交真实签名材料。
-- `tmp/` 仅放非发布内容：`test/`、`reference/`、`project-history/`。
+- `tmp/` 仅放非发布内容：`test/`、需求/兼容资料 `reference/`、`project-history/`。
 
 ## 命令与验证
 
