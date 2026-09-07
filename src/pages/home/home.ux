@@ -41,6 +41,14 @@
   font-weight: bold;
 }
 
+.home-result-num-green {
+  color: #2fbf6b;
+}
+
+.home-result-num-purple {
+  color: #a980ff;
+}
+
 .home-result-sub {
   position: absolute;
   margin-top: 136px;
@@ -156,7 +164,10 @@
       <block if="{{ rollState === 'RESULT' }}">
         <div class="home-result-wrap">
           <image class="home-result-ticks" src="/common/images/result-ticks.png"></image>
-          <text class="home-result-num">{{ resultNum }}</text>
+          <!-- 独立条件节点避免 Vela 在主题切换后复用旧 color。 -->
+          <block if="{{ accent === 'blue' }}"><text class="home-result-num">{{ resultNum }}</text></block>
+          <block if="{{ accent === 'green' }}"><text class="home-result-num home-result-num-green">{{ resultNum }}</text></block>
+          <block if="{{ accent === 'purple' }}"><text class="home-result-num home-result-num-purple">{{ resultNum }}</text></block>
           <text class="home-result-sub" show="{{ resultSub !== '' }}">{{ resultSub }}</text>
         </div>
       </block>
@@ -201,6 +212,7 @@ export default {
     modeLabel: '1D6',
     resultNum: '',
     resultSub: '',
+    accent: 'blue',
   },
 
   onInit() {
@@ -241,15 +253,21 @@ export default {
   },
 
   onHide() {
-    // 离开前台：立即取消订阅与动画（FR-009 / NFR-05）；掷骰控制器在 app 层继续
+    // 离开前台：立即取消订阅、动画及未完成掷骰（FR-009 / NFR-05）。
     this.sensor.stop();
-    this.app.detector.reset();
     this._stopAnim();
+    if (this.app) {
+      this.app.detector.reset();
+      this.app.controller.cancel();
+    }
   },
 
   onDestroy() {
     this.sensor.stop();
     this._stopAnim();
+    if (this.app && this.app.controller) {
+      this.app.controller.cancel();
+    }
     if (this._unsub) {
       this._unsub();
     }
@@ -299,13 +317,14 @@ export default {
     const st = this.app.store.getState();
     this.modeLabel = diceEngine.modeLabel(st.mode);
     this.rollState = st.rollState;
+    this.accent = st.settings && st.settings.accent ? st.settings.accent : 'blue';
 
     if (st.rollState === 'RESULT' && st.rollCtx && st.rollCtx.result) {
       this._stopAnim();
       const r = st.rollCtx.result;
-      // 概念图结果态只保留环中的最终数字，避免在 336×480 上产生次级阅读负担。
+      // 多骰明确展示每颗点数与总和，避免只显示总值而无法核对。
       this.resultNum = String(r.dice.length === 1 ? r.dice[0] : r.total);
-      this.resultSub = '';
+      this.resultSub = r.dice.length > 1 ? r.dice.join(' + ') + ' = ' + r.total : '';
       this.dieSrc = dieSrcOf(r.dice[0]);
       this.hint = '点击屏幕 或 摇一摇手腕';
     } else if (st.rollState === 'SHAKING' || st.rollState === 'SETTLING') {

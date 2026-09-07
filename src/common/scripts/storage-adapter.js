@@ -6,6 +6,22 @@
 
 const memory = new Map();
 
+function decode(value) {
+  if (typeof value !== 'string') {
+    return value;
+  }
+  try {
+    return JSON.parse(value);
+  } catch (e) {
+    // 兼容旧版本留下的纯字符串值。
+    return value;
+  }
+}
+
+function encode(value) {
+  return JSON.stringify(value);
+}
+
 function defaultStorageModule() {
   try {
     // eslint-disable-next-line import/no-unresolved
@@ -28,8 +44,8 @@ function createStorageAdapter(storageModule) {
       storage.get({
         key: key,
         success: function (data) {
-          // @system.storage.get 的 success 直接回传存储值本身
-          cb(data === undefined || data === null ? null : data);
+          // Vela storage 只保存字符串；在适配层还原业务数据。
+          cb(data === undefined || data === null ? null : decode(data));
         },
         fail: function () {
           cb(memory.has(key) ? memory.get(key) : null);
@@ -50,7 +66,7 @@ function createStorageAdapter(storageModule) {
       }
       storage.set({
         key: key,
-        value: value,
+        value: encode(value),
         success: function () { cb(true); },
         fail: function () { cb(false); },
       });

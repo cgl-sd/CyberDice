@@ -244,3 +244,23 @@ test('RollController: SETTLING 中 destroy 后回到 READY 并可接受新摇动
   assert.strictEqual(c.onShakeStart(), true, 'destroy 后应可接受新摇动（对应页面复用）');
   assert.strictEqual(c.getState(), 'SHAKING', '新触发应开启新流程');
 });
+
+test('RollController: cancel 会终止未完成掷骰，且不产生结果或震动', function () {
+  const clock = createFakeClock();
+  const feedback = makeFeedback();
+  const results = [];
+  const states = [];
+  const c = makeController(clock, {
+    feedback: feedback,
+    onResult: function (r) { results.push(r); },
+    onStateChange: function (s, ctx) { states.push({ s: s, ctx: ctx }); },
+  });
+  c.trigger('tap');
+  assert.strictEqual(c.cancel(), true);
+  assert.strictEqual(c.getState(), 'READY');
+  clock.advance(5000);
+  assert.strictEqual(results.length, 0);
+  assert.strictEqual(feedback.count, 0);
+  assert.strictEqual(clock.pendingCount(), 0);
+  assert.strictEqual(states[states.length - 1].ctx.cancelled, true);
+});

@@ -13,29 +13,38 @@
       <!-- Vela 的 for 节点会复用样式节点；预设入口使用独立条件节点，避免旧选中态滞留。 -->
       <div class="list-item" onclick="selectD6">
         <text class="item-label">1D6</text>
-        <block if="{{ selectedLabel === '1D6' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '1D6' && accent === 'blue' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '1D6' && accent === 'green' }}"><div class="check-circle theme-green"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '1D6' && accent === 'purple' }}"><div class="check-circle theme-purple"><text class="check-glyph">✓</text></div></block>
         <block if="{{ selectedLabel !== '1D6' }}"><div class="check-ring"></div></block>
       </div>
       <div class="list-item" onclick="select2D6">
         <text class="item-label">2D6</text>
-        <block if="{{ selectedLabel === '2D6' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '2D6' && accent === 'blue' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '2D6' && accent === 'green' }}"><div class="check-circle theme-green"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '2D6' && accent === 'purple' }}"><div class="check-circle theme-purple"><text class="check-glyph">✓</text></div></block>
         <block if="{{ selectedLabel !== '2D6' }}"><div class="check-ring"></div></block>
       </div>
       <div class="list-item" onclick="select3D6">
         <text class="item-label">3D6</text>
-        <block if="{{ selectedLabel === '3D6' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '3D6' && accent === 'blue' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '3D6' && accent === 'green' }}"><div class="check-circle theme-green"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '3D6' && accent === 'purple' }}"><div class="check-circle theme-purple"><text class="check-glyph">✓</text></div></block>
         <block if="{{ selectedLabel !== '3D6' }}"><div class="check-ring"></div></block>
       </div>
       <div class="list-item" onclick="selectD20">
         <text class="item-label">1D20</text>
-        <block if="{{ selectedLabel === '1D20' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '1D20' && accent === 'blue' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '1D20' && accent === 'green' }}"><div class="check-circle theme-green"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ selectedLabel === '1D20' && accent === 'purple' }}"><div class="check-circle theme-purple"><text class="check-glyph">✓</text></div></block>
         <block if="{{ selectedLabel !== '1D20' }}"><div class="check-ring"></div></block>
       </div>
       <div class="list-item" onclick="goCustom">
         <text class="item-label">自定义</text>
-        <div class="{{ isCustom ? 'check-circle' : 'check-ring' }}">
-          <text class="check-glyph" show="{{ isCustom }}">✓</text>
-        </div>
+        <block if="{{ isCustom && accent === 'blue' }}"><div class="check-circle"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ isCustom && accent === 'green' }}"><div class="check-circle theme-green"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ isCustom && accent === 'purple' }}"><div class="check-circle theme-purple"><text class="check-glyph">✓</text></div></block>
+        <block if="{{ !isCustom }}"><div class="check-ring"></div></block>
       </div>
       <div class="list-item" onclick="goSettings">
         <text class="item-label">偏好设置</text>
@@ -56,6 +65,7 @@ export default {
   data: {
     selectedLabel: '1D6',
     isCustom: false,
+    accent: 'blue',
   },
 
   onInit() {
@@ -68,8 +78,10 @@ export default {
 
   refresh() {
     const mode = this.app.store.getState().mode;
+    const settings = this.app.store.getState().settings;
     this.selectedLabel = typeof mode === 'string' ? mode : '';
     this.isCustom = typeof mode === 'object';
+    this.accent = settings && settings.accent ? settings.accent : 'blue';
   },
 
   selectPreset(label) {

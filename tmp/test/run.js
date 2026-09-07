@@ -11,6 +11,7 @@ global.test = function (name, fn) {
 require('./dice-engine.test.js');
 require('./shake-detector.test.js');
 require('./roll-controller.test.js');
+require('./store.test.js');
 require('./lifecycle.test.js');
 require('./assets.test.js');
 require('./navigation-contract.test.js');

@@ -1,5 +1,6 @@
 const assert = require('assert');
 const storeMod = require('../../src/common/scripts/store.js');
+const storageAdapterMod = require('../../src/common/scripts/storage-adapter.js');
 
 /** 内存版 storage adapter（模拟 @system.storage 持久化行为） */
 function makeMockStorage() {
@@ -50,4 +51,31 @@ test('Store: 模式支持预设与自定义对象，load 恢复', async function
   await waitLoad(store2);
   assert.deepStrictEqual(store2.getState().mode, { count: 3, sides: 8 });
   assert.strictEqual(store2.getModeLabel(), '3D8');
+});
+
+test('StorageAdapter: Vela 字符串存储可完整恢复设置、模式与历史', async function () {
+  const disk = new Map();
+  const velaStorage = {
+    get(opts) {
+      opts.success(disk.has(opts.key) ? disk.get(opts.key) : null);
+    },
+    set(opts) {
+      assert.strictEqual(typeof opts.value, 'string', 'Vela storage value 必须是字符串');
+      disk.set(opts.key, opts.value);
+      opts.success();
+    },
+  };
+  const adapter = storageAdapterMod.createStorageAdapter(velaStorage);
+  const store = storeMod.createStore(adapter);
+  await waitLoad(store);
+  store.setSetting('accent', 'green');
+  store.setMode({ count: 2, sides: 6 });
+  store.pushHistory({ dice: [2, 5], total: 7 }, { count: 2, sides: 6 });
+
+  const restored = storeMod.createStore(adapter);
+  await waitLoad(restored);
+  assert.strictEqual(restored.getState().settings.accent, 'green');
+  assert.deepStrictEqual(restored.getState().mode, { count: 2, sides: 6 });
+  assert.deepStrictEqual(restored.getState().history[0].dice, [2, 5]);
+  assert.strictEqual(restored.getState().history[0].total, 7);
 });

@@ -203,6 +203,19 @@ function createRollController(opts) {
     return lastResult;
   }
 
+  /** 页面离开前取消未完成流程，避免后台产生结果、历史记录或震动。 */
+  function cancel() {
+    const wasBusy = isBusy();
+    clearTimers();
+    source = null;
+    shakeActive = false;
+    waitForQuiet = false;
+    if (state !== C.STATE_READY) {
+      transition(C.STATE_READY, { cancelled: true });
+    }
+    return wasBusy;
+  }
+
   /** 页面销毁时清理定时器，避免幽灵回调 */
   function destroy() {
     clearTimers();
@@ -221,6 +234,7 @@ function createRollController(opts) {
     getState: getState,
     getLastResult: getLastResult,
     isBusy: isBusy,
+    cancel: cancel,
     destroy: destroy,
   };
 }
