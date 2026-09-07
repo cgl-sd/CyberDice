@@ -82,7 +82,7 @@ test('Vela visual parity: 首页骰子舞台与浏览器版一样直接由页面
   assert.ok(!home.includes('<dice-stage'));
   assert.ok(/\.home-die-img\s*\{[\s\S]*?width:\s*184px;/.test(home));
   assert.ok(/\.home-result-wrap\s*\{[\s\S]*?width:\s*276px;/.test(home));
-  assert.ok(/\.home-function-card\s*\{[\s\S]*?margin:\s*10px 16px 16px 16px;/.test(home));
+  assert.ok(/\.home-function-card\s*\{[\s\S]*?margin:\s*10px 16px 8px 16px;/.test(home));
   assert.ok(/\.list-item\s*\{[\s\S]*?height:\s*80px;/.test(style));
   assert.ok(/\.list\s*\{[\s\S]*?overflow:\s*scroll;/.test(style));
 });
@@ -114,7 +114,7 @@ test('Vela theme contract: 每个主题色使用独立条件节点，不遗留�
 
 test('Vela home layout: 首页功能卡使用本页静态 Flex 布局，不依赖 transform', () => {
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
-  assert.ok(/\.home-function-card\s*\{[\s\S]*?margin:\s*10px 16px 16px 16px;/.test(home));
+  assert.ok(/\.home-function-card\s*\{[\s\S]*?margin:\s*10px 16px 8px 16px;/.test(home));
   assert.ok(!home.includes('transform:'));
   assert.ok(!style.includes('.mode-card'));
   assert.ok(home.includes('@media (max-width: 160)'));

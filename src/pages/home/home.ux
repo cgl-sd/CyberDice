@@ -63,8 +63,8 @@
   justify-content: space-between;
   background-color: #1c1c21;
   border-radius: 16px;
-  /* 矩形大屏维持原始 16px 底边距，避免入口贴近屏幕边缘。 */
-  margin: 10px 16px 16px 16px;
+  /* 大屏功能卡底边距 8px；小屏由下方宽度媒体查询覆盖。 */
+  margin: 10px 16px 8px 16px;
   padding: 0 20px;
   flex-shrink: 0;
 }
