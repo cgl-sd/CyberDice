@@ -36,91 +36,6 @@
   color: #2f6bed;
 }
 
-/* ---- 首页 ---- */
-.dice-area {
-  flex: 1;
-  flex-shrink: 1;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.die-img {
-  width: 184px;
-  height: 184px;
-}
-
-.die-img-shake-l {
-  width: 184px;
-  height: 184px;
-  margin-left: -8px;
-}
-
-.die-img-shake-r {
-  width: 184px;
-  height: 184px;
-  margin-left: 8px;
-}
-
-.result-wrap {
-  width: 276px;
-  height: 276px;
-  align-items: center;
-  justify-content: center;
-}
-
-.result-ticks {
-  position: absolute;
-  width: 276px;
-  height: 276px;
-}
-
-.result-num {
-  font-size: 124px;
-  color: #ffffff;
-  font-weight: bold;
-}
-
-.result-sub {
-  position: absolute;
-  margin-top: 136px;
-  font-size: 20px;
-  color: #9a9ca3;
-}
-
-.hint {
-  height: 32px;
-  font-size: 20px;
-  color: #9a9ca3;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.mode-card {
-  /* 矩形大屏在原位置基础上再下移 10px；小屏会显式取消该位移。 */
-  height: 56px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #1c1c21;
-  border-radius: 16px;
-  margin: 10px 16px 6px 16px;
-  padding: 0 20px;
-  flex-shrink: 0;
-  transform: translateY(10px);
-}
-
-.mode-card-label {
-  font-size: 24px;
-  color: #ffffff;
-  font-weight: bold;
-}
-
-.mode-card-chevron {
-  font-size: 26px;
-  color: #6f7178;
-}
-
 /* ---- 通用列表页（80px 触控卡片，超出可纵向滚动） ---- */
 .list {
   flex: 1;
@@ -380,45 +295,6 @@
     font-size: 22px;
   }
 
-  .dice-area {
-    min-height: 0;
-  }
-
-  .die-img,
-  .die-img-shake-l,
-  .die-img-shake-r {
-    width: 164px;
-    height: 164px;
-  }
-
-  .die-img-shake-l {
-    margin-left: -7px;
-  }
-
-  .die-img-shake-r {
-    margin-left: 7px;
-  }
-
-  .result-wrap,
-  .result-ticks {
-    width: 224px;
-    height: 224px;
-  }
-
-  .result-num {
-    font-size: 106px;
-  }
-
-  .result-sub {
-    margin-top: 108px;
-    font-size: 18px;
-  }
-
-  .hint {
-    height: 28px;
-    font-size: 17px;
-  }
-
   .list {
     padding: 4px 28px 14px 28px;
   }
@@ -453,15 +329,4 @@
     font-size: 16px;
   }
 
-  .mode-card {
-    height: 58px;
-    /* 大幅上移，避开胶囊屏底部圆角及单手拇指难以触达的边缘。 */
-    margin: 8px 28px 80px 28px;
-    padding: 0 16px;
-    transform: translateY(0px);
-  }
-
-  .mode-card-label {
-    font-size: 22px;
-  }
 }

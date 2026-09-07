@@ -74,26 +74,28 @@ test('Vela runtime parity: 页面通过 $app.$def 访问应用单例，列表显
 
 test('Vela visual parity: 首页骰子舞台与浏览器版一样直接由页面承载', () => {
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
-  assert.ok(home.includes('<div class="dice-area" onclick="onTapRoll">'));
+  assert.ok(home.includes('<div class="home-dice-area" onclick="onTapRoll">'));
   assert.ok(home.includes('<block if="{{ jitter }}">'));
   assert.ok(home.includes('<block if="{{ !jitter }}">'));
   assert.ok(home.includes('src="{{ dieSrc }}"'));
   assert.ok(home.includes('src="/common/images/result-ticks.png"'));
   assert.ok(!home.includes('<dice-stage'));
-  assert.ok(/\.die-img\s*\{[\s\S]*?width:\s*184px;/.test(style));
-  assert.ok(/\.result-wrap\s*\{[\s\S]*?width:\s*276px;/.test(style));
+  assert.ok(/\.home-die-img\s*\{[\s\S]*?width:\s*184px;/.test(home));
+  assert.ok(/\.home-result-wrap\s*\{[\s\S]*?width:\s*276px;/.test(home));
+  assert.ok(/\.home-function-card\s*\{[\s\S]*?margin:\s*10px 16px 16px 16px;/.test(home));
   assert.ok(/\.list-item\s*\{[\s\S]*?height:\s*80px;/.test(style));
   assert.ok(/\.list\s*\{[\s\S]*?overflow:\s*scroll;/.test(style));
 });
 
 test('Vela responsive contract: 小尺寸手环保留安全区、底部入口和紧凑历史卡片', () => {
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
-  const compact = style.slice(style.indexOf('@media (max-width: 160)'));
-  assert.ok(compact.includes('justify-content: center;'));
-  assert.ok(/\.die-img,[\s\S]*?width:\s*164px;/.test(compact));
-  assert.ok(compact.includes('margin: 8px 28px 80px 28px;'));
-  assert.ok(compact.includes('.history-item'));
-  assert.ok(compact.includes('height: 76px;'));
+  const sharedCompact = style.slice(style.indexOf('@media (max-width: 160)'));
+  const homeCompact = home.slice(home.indexOf('@media (max-width: 160)'));
+  assert.ok(sharedCompact.includes('justify-content: center;'));
+  assert.ok(/\.home-die-img,[\s\S]*?width:\s*164px;/.test(homeCompact));
+  assert.ok(homeCompact.includes('margin: 8px 28px 80px 28px;'));
+  assert.ok(/\.list-item\s*\{[\s\S]*?height:\s*76px;/.test(style));
+  assert.ok(/\.history-item\s*\{[\s\S]*?height:\s*72px;/.test(style));
 });
 
 test('Vela theme contract: 每个主题色使用独立条件节点，不遗留蓝色选择态', () => {
@@ -109,19 +111,20 @@ test('Vela theme contract: 每个主题色使用独立条件节点，不遗留�
   assert.ok(!theme.includes("'background-color:' + $item.color"));
 });
 
-test('Vela large-screen contract: 首页功能卡额外下移 10px 但不影响小屏安全距离', () => {
+test('Vela home layout: 首页功能卡使用本页静态 Flex 布局，不依赖 transform', () => {
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
-  assert.ok(/\.mode-card\s*\{[\s\S]*?margin:\s*10px 16px 6px 16px;/.test(style));
-  assert.ok(/\.mode-card\s*\{[\s\S]*?transform:\s*translateY\(10px\);/.test(style));
-  const compact = style.slice(style.indexOf('@media (max-width: 160)'));
-  assert.ok(compact.includes('margin: 8px 28px 80px 28px;'));
-  assert.ok(compact.includes('transform: translateY(0px);'));
+  assert.ok(/\.home-function-card\s*\{[\s\S]*?margin:\s*10px 16px 16px 16px;/.test(home));
+  assert.ok(!home.includes('transform:'));
+  assert.ok(!style.includes('.mode-card'));
+  assert.ok(home.includes('@media (max-width: 160)'));
+  assert.ok(home.includes('margin: 8px 28px 80px 28px;'));
 });
 
 test('Multi-device contract: 9、9 Pro、10、10 Pro 均有明确尺寸档与体验标识', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'manifest.json'), 'utf8'));
   const style = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'common', 'styles', 'style.css'), 'utf8');
   assert.strictEqual(manifest.config.designWidth, 336);
+  assert.strictEqual(manifest.package, 'com.cyberdice');
   assert.ok(style.includes('width: 100%;'));
   assert.ok(style.includes('@media (max-width: 160)'));
 });

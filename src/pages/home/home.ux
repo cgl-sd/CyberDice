@@ -1,5 +1,126 @@
 <style>
 @import '../../common/styles/style.css';
+
+/* 首页关键视觉完全归属本页：Vela 原生 Flex 布局，不依赖共享样式或 transform 位移。 */
+.home-dice-area {
+  flex: 1;
+  flex-shrink: 1;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.home-die-img {
+  width: 184px;
+  height: 184px;
+}
+
+.home-die-img-shake {
+  width: 184px;
+  height: 184px;
+  margin-left: -8px;
+}
+
+.home-result-wrap {
+  width: 276px;
+  height: 276px;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-result-ticks {
+  position: absolute;
+  width: 276px;
+  height: 276px;
+}
+
+.home-result-num {
+  font-size: 124px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.home-result-sub {
+  position: absolute;
+  margin-top: 136px;
+  font-size: 20px;
+  color: #9a9ca3;
+}
+
+.home-hint {
+  height: 32px;
+  font-size: 20px;
+  color: #9a9ca3;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.home-function-card {
+  height: 56px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1c1c21;
+  border-radius: 16px;
+  /* 矩形大屏维持原始 16px 底边距，避免入口贴近屏幕边缘。 */
+  margin: 10px 16px 16px 16px;
+  padding: 0 20px;
+  flex-shrink: 0;
+}
+
+.home-function-label {
+  font-size: 24px;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.home-function-chevron {
+  font-size: 26px;
+  color: #6f7178;
+}
+
+@media (max-width: 160) {
+  .home-die-img,
+  .home-die-img-shake {
+    width: 164px;
+    height: 164px;
+  }
+
+  .home-die-img-shake {
+    margin-left: -7px;
+  }
+
+  .home-result-wrap,
+  .home-result-ticks {
+    width: 224px;
+    height: 224px;
+  }
+
+  .home-result-num {
+    font-size: 106px;
+  }
+
+  .home-result-sub {
+    margin-top: 108px;
+    font-size: 18px;
+  }
+
+  .home-hint {
+    height: 28px;
+    font-size: 17px;
+  }
+
+  .home-function-card {
+    height: 58px;
+    margin: 8px 28px 80px 28px;
+    padding: 0 16px;
+  }
+
+  .home-function-label {
+    font-size: 22px;
+  }
+}
 </style>
 
 <template>
@@ -13,31 +134,31 @@
       主骰子区域：直接使用页面元素，和浏览器模拟器保持同一树结构。
       Vela 的自定义组件宿主不会自动继承 flex: 1，曾使骰子区域高度为 0。
     -->
-    <div class="dice-area" onclick="onTapRoll">
+    <div class="home-dice-area" onclick="onTapRoll">
       <block if="{{ rollState === 'RESULT' }}">
-        <div class="result-wrap">
-          <image class="result-ticks" src="/common/images/result-ticks.png"></image>
-          <text class="result-num">{{ resultNum }}</text>
-          <text class="result-sub" show="{{ resultSub !== '' }}">{{ resultSub }}</text>
+        <div class="home-result-wrap">
+          <image class="home-result-ticks" src="/common/images/result-ticks.png"></image>
+          <text class="home-result-num">{{ resultNum }}</text>
+          <text class="home-result-sub" show="{{ resultSub !== '' }}">{{ resultSub }}</text>
         </div>
       </block>
       <block if="{{ rollState !== 'RESULT' }}">
         <!-- Vela 对同一 image 的 class/src 连续更新偶发不重绘；交替节点可确保每帧提交。 -->
         <block if="{{ jitter }}">
-          <image class="die-img-shake-l" src="{{ dieSrc }}"></image>
+          <image class="home-die-img-shake" src="{{ dieSrc }}"></image>
         </block>
         <block if="{{ !jitter }}">
-          <image class="die-img" src="{{ dieSrc }}"></image>
+          <image class="home-die-img" src="{{ dieSrc }}"></image>
         </block>
       </block>
     </div>
 
-    <text class="hint">{{ hint }}</text>
+    <text class="home-hint">{{ hint }}</text>
 
     <!-- 底部模式卡片 → 功能入口 -->
-    <div class="mode-card" onclick="goDiceSelect">
-      <text class="mode-card-label">{{ modeLabel }}</text>
-      <text class="mode-card-chevron">›</text>
+    <div class="home-function-card" onclick="goDiceSelect">
+      <text class="home-function-label">{{ modeLabel }}</text>
+      <text class="home-function-chevron">›</text>
     </div>
   </div>
 </template>

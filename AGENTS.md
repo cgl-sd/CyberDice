@@ -1,6 +1,6 @@
 # AGENTS.md — CyberDice 工作区指引
 
-CyberDice 是面向小米手环 9、9 Pro、10、10 Pro 的 Vela JS 快应用，包名 `com.vibecoding.cyberdice`，发布物为 RPK。9 Pro（336×480）为正式基线；9（192×490）、10（212×520）与 10 Pro（336×480）为真机验收前的体验版。唯一需求基线位于 `tmp/reference/Wrist_Dice_小米手环9Pro_产品需求与程序设计说明书.md`；改动功能、阈值或架构前必须先读它。结构调整和功能变更记入 `tmp/project-history/CHANGELOG.md`。
+CyberDice 是面向小米手环 9、9 Pro、10、10 Pro 的 Vela JS 快应用，包名 `com.cyberdice`，发布物为 RPK。9 Pro（336×480）为正式基线；9（192×490）、10（212×520）与 10 Pro（336×480）为真机验收前的体验版。唯一需求基线位于 `tmp/reference/Wrist_Dice_小米手环9Pro_产品需求与程序设计说明书.md`；改动功能、阈值或架构前必须先读它。结构调整和功能变更记入 `tmp/project-history/CHANGELOG.md`。
 
 ## 目录职责
 

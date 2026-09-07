@@ -1,6 +1,6 @@
 # CyberDice
 
-CyberDice 是一款完全离线运行的 Xiaomi Vela JS 摇骰子应用，包名为 `com.vibecoding.cyberdice`，交付物为 RPK。点击屏幕或摇动手腕即可投掷；结果由本地随机逻辑生成，并以动画和震动完成反馈。
+CyberDice 是一款完全离线运行的 Xiaomi Vela JS 摇骰子应用，包名为 `com.cyberdice`，交付物为 RPK。点击屏幕或摇动手腕即可投掷；结果由本地随机逻辑生成，并以动画和震动完成反馈。
 
 ![CyberDice UI 设计参考图](00_reference/design/cyberdice-ui-reference.png)
 
