@@ -87,7 +87,7 @@
 
   .home-dice-area {
     /* 为绝对定位的提示与功能入口预留垂直空间，防止 Flex 内容挤出屏幕。 */
-    margin-bottom: 130px;
+    margin-bottom: 140px;
   }
 
   .home-die-img,
@@ -121,7 +121,7 @@
     position: absolute;
     left: 0px;
     right: 0px;
-    bottom: 130px;
+    bottom: 140px;
   }
 
   .home-function-card {
@@ -130,7 +130,7 @@
     position: absolute;
     left: 28px;
     right: 28px;
-    bottom: 64px;
+    bottom: 74px;
     margin: 0px;
     padding: 0 16px;
   }
