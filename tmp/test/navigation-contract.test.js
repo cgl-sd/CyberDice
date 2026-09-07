@@ -54,3 +54,12 @@ test('About contract: 使用概念图骰子并完成中文本地化', () => {
   assert.ok(about.includes('版本 v{{ version }}'));
   assert.ok(simHtml.includes('版本 v1.1.0'));
 });
+
+test('Feature contract: 功能页可直接进入关于页', () => {
+  const selectPage = fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'pages', 'dice-select', 'dice-select.ux'), 'utf8');
+  const sim = fs.readFileSync(path.join(__dirname, '..', 'sim', 'app.js'), 'utf8');
+  assert.ok(selectPage.includes('<page-header title="功能"></page-header>'));
+  assert.ok(selectPage.includes('label="关于" chevron="true" onactivate="goAbout"'));
+  assert.ok(selectPage.includes("router.push({ uri: '/pages/about' })"));
+  assert.ok(sim.includes("about.onclick = () => navigate('about')"));
+});

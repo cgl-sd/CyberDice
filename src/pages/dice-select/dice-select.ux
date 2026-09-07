@@ -4,7 +4,7 @@
 
 <template>
   <div class="page">
-    <page-header title="功能入口"></page-header>
+    <page-header title="功能"></page-header>
 
     <div class="list">
       <div class="list-item" for="{{ presets }}" onclick="selectPreset($item)">
@@ -21,6 +21,7 @@
       </div>
       <list-row label="偏好设置" chevron="true" onactivate="goSettings"></list-row>
       <list-row label="历史记录" chevron="true" onactivate="goHistory"></list-row>
+      <list-row label="关于" chevron="true" onactivate="goAbout"></list-row>
     </div>
   </div>
 </template>
@@ -66,6 +67,10 @@ export default {
 
   goHistory() {
     router.push({ uri: '/pages/history' });
+  },
+
+  goAbout() {
+    router.push({ uri: '/pages/about' });
   },
 
 };

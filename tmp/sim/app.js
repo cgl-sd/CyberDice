@@ -211,7 +211,7 @@ function stopAnim() {
   el('dieImg').className = 'die-img';
 }
 
-// ---- 右滑后的功能入口 ----
+// ---- 右滑后的功能页 ----
 const PRESETS = ['1D6', '2D6', '3D6', '1D20'];
 
 function renderDiceSelect() {
@@ -246,6 +246,11 @@ function renderDiceSelect() {
   history.innerHTML = '<span class="item-label">历史记录</span><span class="item-chevron">›</span>';
   history.onclick = () => navigate('history');
   list.appendChild(history);
+  const about = document.createElement('div');
+  about.className = 'list-item';
+  about.innerHTML = '<span class="item-label">关于</span><span class="item-chevron">›</span>';
+  about.onclick = () => navigate('about');
+  list.appendChild(about);
 }
 
 // ---- 自定义页 ----
