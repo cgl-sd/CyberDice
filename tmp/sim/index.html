@@ -16,6 +16,8 @@
   /* ===== 复刻 .ux 页面（336×480；比例校准：顶栏52/行60/主字24/骰子148/刻度环240） ===== */
   .screen { position: absolute; inset: 0; display: none; flex-direction: column; background: #000; }
   .screen.active { display: flex; }
+  /* 首页没有原生纵向滚动，交给手势层识别上滑；列表页仍保留其原生纵向滚动。 */
+  #scr-home { touch-action: none; }
 
   .topbar { height: 52px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
   .app-name { font-size: 24px; color: #fff; font-weight: bold; }
@@ -210,6 +212,6 @@
     <div id="log"></div>
   </div>
 
-<script src="app.js?v=26"></script>
+<script src="app.js?v=27"></script>
 </body>
 </html>

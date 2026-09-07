@@ -464,7 +464,7 @@ async function main() {
   el('settingVibration').onclick = () => store.setSetting('vibration', !store.getState().settings.vibration);
   el('settingAnimation').onclick = () => store.setSetting('animation', !store.getState().settings.animation);
 
-  // 首页手势：右滑打开功能入口；左滑交给系统；上下滑保持页面/列表原生行为。
+  // 首页手势：上滑查看历史、右滑打开功能入口；左滑模拟系统返回。
   const device = el('device');
   const SWIPE_DISTANCE = 56;
   const SWIPE_DIRECTION_RATIO = 1.2;
@@ -482,14 +482,23 @@ async function main() {
     if (!gesture) return;
     const start = gesture;
     gesture = null;
-    if (stack[stack.length - 1] !== 'home' || controller.isBusy()) return;
     const p = pointOf(event);
     const dx = p.x - start.x;
     const dy = p.y - start.y;
-    // 方向锁定可避免纵向列表滚动或斜向点按误触发右滑。
-    if (dx < SWIPE_DISTANCE || Math.abs(dx) < Math.abs(dy) * SWIPE_DIRECTION_RATIO) return;
+    if (controller.isBusy()) return;
+    const horizontal = Math.abs(dx) >= SWIPE_DISTANCE && Math.abs(dx) >= Math.abs(dy) * SWIPE_DIRECTION_RATIO;
+    const upward = -dy >= SWIPE_DISTANCE && Math.abs(dy) >= Math.abs(dx) * SWIPE_DIRECTION_RATIO;
+    if (horizontal && dx < 0) {
+      // 子页面回退；首页交给宿主浏览器/系统处理退出。
+      if (stack.length > 1) goBack();
+      return;
+    }
+    if (stack[stack.length - 1] !== 'home') return;
+    // 方向锁定避免斜向点按或列表滚动误触发导航。
+    if (!horizontal && !upward) return;
     suppressTapUntil = Date.now() + 350;
-    navigate('dice-select');
+    if (upward) navigate('history');
+    if (horizontal && dx > 0) navigate('dice-select');
   };
   const cancelGesture = () => { gesture = null; };
   if (window.PointerEvent) {
