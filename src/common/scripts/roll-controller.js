@@ -17,6 +17,7 @@ const DEFAULTS = {
   tapRollMs: C.ROLL.TAP_ROLL_MS,
   shakeMinRollMs: C.ROLL.SHAKE_MIN_ROLL_MS,
   shakeMaxRollMs: C.ROLL.SHAKE_MAX_ROLL_MS,
+  feedbackDelayMs: C.ROLL.FEEDBACK_DELAY_MS,
   settlingMs: C.SHAKE.SETTLING_MS,
   resultMs: C.ROLL.RESULT_MS,
 };
@@ -41,6 +42,7 @@ function createRollController(opts) {
   let resultTimer = null;
   let tapTimer = null;
   let maxRollTimer = null;
+  let feedbackTimer = null;
   let shakeActive = false;
   let waitForQuiet = false;
 
@@ -66,6 +68,10 @@ function createRollController(opts) {
       clearTimeoutFn(tapTimer);
       tapTimer = null;
     }
+    if (feedbackTimer !== null) {
+      clearTimeoutFn(feedbackTimer);
+      feedbackTimer = null;
+    }
   }
 
   function isBusy() {
@@ -84,7 +90,7 @@ function createRollController(opts) {
       maxRollTimer = setTimeoutFn(function () {
         maxRollTimer = null;
         waitForQuiet = shakeActive;
-        finishRoll();
+        finishRoll({ forced: true });
       }, cfg.shakeMaxRollMs);
     }
     if (src === 'tap') {
@@ -110,20 +116,32 @@ function createRollController(opts) {
     }, delayMs);
   }
 
-  function finishRoll() {
+  function finishRoll(reason) {
     if (state !== C.STATE_SHAKING && state !== C.STATE_SETTLING) {
       return;
     }
     clearTimers();
     const result = diceEngine.roll(mode); // 最终结果只生成一次
     lastResult = result;
-    transition(C.STATE_RESULT, { result: result, source: source });
-    try {
-      feedback.vibrate(); // 结果锁定时短震一次（FR-007）
-    } catch (e) {
-      // 震动失败吞掉异常，不阻塞 UI（第 14 节）
-    }
+    const forced = Boolean(reason && reason.forced);
+    transition(C.STATE_RESULT, { result: result, source: source, forced: forced });
     onResult(result, source);
+
+    // 强制结算发生在持续的高频加速度计回调中。让出一个短帧间隔，先提交
+    // RESULT 视觉状态，再请求震动；否则部分真机可能显示结果但丢失触觉请求。
+    feedbackTimer = setTimeoutFn(function () {
+      feedbackTimer = null;
+      if (state !== C.STATE_RESULT) {
+        return;
+      }
+      try {
+        // 到达持续摇腕上限意味着用户仍在明显运动，使用官方 long 模式保证
+        // 触觉提醒可感知；普通停稳与点击保持 short 模式。
+        feedback.vibrate(forced ? 'long' : 'short');
+      } catch (e) {
+        // 震动失败吞掉异常，不阻塞 UI（第 14 节）
+      }
+    }, cfg.feedbackDelayMs);
 
     resultTimer = setTimeoutFn(function () {
       resultTimer = null;

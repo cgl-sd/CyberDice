@@ -1,10 +1,10 @@
 {
   "package": "com.cyberdice",
   "name": "CyberDice",
-  "versionName": "1.1.1",
-  "versionCode": 3,
+  "versionName": "1.2.0",
+  "versionCode": 11,
   "minPlatformVersion": 1090,
-  "icon": "/common/images/icon.png",
+  "icon": "/common/images/icon-round-v2.png",
   "deviceTypeList": ["watch"],
   "features": [
     { "name": "system.sensor" },

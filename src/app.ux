@@ -19,10 +19,11 @@ export default {
     this.controller = controllerMod.createRollController({
       diceEngine: diceEngine,
       feedback: {
-        vibrate: () => {
+        vibrate: (mode) => {
           if (this.store.getState().settings.vibration) {
-            this.feedback.vibrate();
+            return this.feedback.vibrate(mode);
           }
+          return false;
         },
       },
       onStateChange: (s, ctx) => {

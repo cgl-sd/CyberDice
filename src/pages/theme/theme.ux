@@ -12,23 +12,23 @@
       <div class="list-item" onclick="pickBlue">
         <text class="item-label">科技蓝</text>
         <block if="{{ settings.accent === 'blue' }}">
-          <div class="check-circle theme-blue"><text class="check-glyph">✓</text></div>
+          <div class="check-circle theme-choice-circle theme-blue"><text class="check-glyph theme-choice-glyph">✓</text></div>
         </block>
-        <block if="{{ settings.accent !== 'blue' }}"><div class="check-ring"></div></block>
+        <block if="{{ settings.accent !== 'blue' }}"><div class="check-ring theme-choice-ring"></div></block>
       </div>
       <div class="list-item" onclick="pickGreen">
         <text class="item-label">极客绿</text>
         <block if="{{ settings.accent === 'green' }}">
-          <div class="check-circle theme-green"><text class="check-glyph">✓</text></div>
+          <div class="check-circle theme-choice-circle theme-green"><text class="check-glyph theme-choice-glyph">✓</text></div>
         </block>
-        <block if="{{ settings.accent !== 'green' }}"><div class="check-ring"></div></block>
+        <block if="{{ settings.accent !== 'green' }}"><div class="check-ring theme-choice-ring"></div></block>
       </div>
       <div class="list-item" onclick="pickPurple">
         <text class="item-label">赛博紫</text>
         <block if="{{ settings.accent === 'purple' }}">
-          <div class="check-circle theme-purple"><text class="check-glyph">✓</text></div>
+          <div class="check-circle theme-choice-circle theme-purple"><text class="check-glyph theme-choice-glyph">✓</text></div>
         </block>
-        <block if="{{ settings.accent !== 'purple' }}"><div class="check-ring"></div></block>
+        <block if="{{ settings.accent !== 'purple' }}"><div class="check-ring theme-choice-ring"></div></block>
       </div>
     </div>
   </div>

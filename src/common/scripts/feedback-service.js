@@ -18,13 +18,14 @@ function createFeedbackService(vibratorModule) {
   let lastVibrateAt = 0;
 
   /** 结果锁定时的单次短震；调用方保证每次结果只调用一次 */
-  function vibrate() {
+  function vibrate(mode) {
+    const vibrationMode = mode === 'long' ? 'long' : 'short';
     try {
       if (!vibrator || typeof vibrator.vibrate !== 'function') {
         return false;
       }
       // 基础 vibrate；不依赖 start/stop 高级接口（第 6 节）
-      vibrator.vibrate({ mode: 'short' });
+      vibrator.vibrate({ mode: vibrationMode });
       lastVibrateAt = Date.now();
       return true;
     } catch (e) {

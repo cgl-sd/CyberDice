@@ -4,7 +4,7 @@
  */
 
 module.exports = {
-  VERSION: '1.1.1',
+  VERSION: '1.2.0',
 
   // 掷骰模式
   MODE_1D6: '1D6',
@@ -44,6 +44,8 @@ module.exports = {
     SHAKE_MIN_ROLL_MS: 400,
     // 从首次摇动触发起计时，重新摇动不延长上限；避免持续甩腕造成过长动画
     SHAKE_MAX_ROLL_MS: 1200,
+    // 结果帧提交后再请求触觉反馈，避免持续加速度计回调期间丢失震动请求。
+    FEEDBACK_DELAY_MS: 40,
     // 结果展示时长：保证结果稳定显示 >= 1s，同时覆盖 500~800ms 冷却
     RESULT_MS: 1000,
   },
