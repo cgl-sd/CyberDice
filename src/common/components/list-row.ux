@@ -1,0 +1,25 @@
+<template>
+  <div class="list-item" onclick="activate">
+    <text class="item-label">{{ label }}</text>
+    <block if="{{ selectable }}">
+      <div class="{{ selected ? 'check-circle' : 'check-ring' }}">
+        <text class="check-glyph" show="{{ selected }}">✓</text>
+      </div>
+    </block>
+    <text class="item-chevron" show="{{ chevron }}">›</text>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    label: '',
+    selectable: false,
+    selected: false,
+    chevron: false,
+  },
+  activate() {
+    this.$emit('activate');
+  },
+};
+</script>

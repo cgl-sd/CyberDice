@@ -119,9 +119,10 @@ let feedTimer = null;
 let t0 = Date.now();
 let lastFinal = 5;
 let tick = 0;
+let sensorFallback = false;
 
 const dieSrcOf = (v) => '/src/common/images/dice/die-' + v + '.png';
-const BLUR_SRC = '/src/common/images/dice/die-blur.png';
+const shakeSrcOf = (frame) => '/src/common/images/dice/shake-' + frame + '.png';
 
 function createApp() {
   const storageAdapter = M['storage-adapter'].createStorageAdapter(browserStorage);
@@ -178,7 +179,7 @@ function syncHome() {
     el('resultWrap').style.display = '';
     el('dieImg').style.display = 'none';
     el('resultNum').textContent = r.dice.length === 1 ? String(r.dice[0]) : String(r.total);
-    el('resultSub').textContent = r.dice.length > 1 ? r.dice.join(' + ') + ' = ' + r.total : '';
+    el('resultSub').textContent = r.dice.length > 1 ? r.dice.join(' + ') + ' =' : '';
     el('hint').textContent = '点击屏幕 或 摇一摇手腕';
   } else if (st.rollState === 'SHAKING' || st.rollState === 'SETTLING') {
     startAnim();
@@ -188,17 +189,16 @@ function syncHome() {
     el('resultWrap').style.display = 'none';
     el('dieImg').style.display = '';
     el('dieImg').src = dieSrcOf(lastFinal);
-    el('hint').textContent = '摇一摇手腕 或 点击屏幕';
+    el('hint').textContent = sensorFallback ? '传感器不可用 · 点击掷骰' : '摇一摇手腕 或 点击掷骰';
   }
 }
 
 function startAnim() {
   if (animTimer || !store.getState().settings.animation) return;
-  const mode = store.getState().mode;
   animTimer = setInterval(() => {
     tick += 1;
     el('dieImg').className = tick % 2 ? 'die-shake-l' : 'die-shake-r';
-    el('dieImg').src = tick % 3 === 1 ? BLUR_SRC : dieSrcOf(M['dice'].rollAnimFace(mode)[0] % 6 + 1);
+    el('dieImg').src = shakeSrcOf(tick % 4 + 1);
   }, 80);
 }
 
@@ -210,7 +210,7 @@ function stopAnim() {
   el('dieImg').className = 'die-img';
 }
 
-// ---- 选择骰子页 ----
+// ---- 右滑后的功能入口 ----
 const PRESETS = ['1D6', '2D6', '3D6', '1D20'];
 
 function renderDiceSelect() {
@@ -235,6 +235,16 @@ function renderDiceSelect() {
   custom.innerHTML = '<span class="item-label">自定义</span>' + checkHTML(isCustom);
   custom.onclick = () => navigate('custom');
   list.appendChild(custom);
+  const settings = document.createElement('div');
+  settings.className = 'list-item';
+  settings.innerHTML = '<span class="item-label">偏好设置</span><span class="item-chevron">›</span>';
+  settings.onclick = () => navigate('settings');
+  list.appendChild(settings);
+  const history = document.createElement('div');
+  history.className = 'list-item';
+  history.innerHTML = '<span class="item-label">历史记录</span><span class="item-chevron">›</span>';
+  history.onclick = () => navigate('history');
+  list.appendChild(history);
 }
 
 // ---- 自定义页 ----
@@ -352,6 +362,12 @@ function onSample(s) {
   }
 }
 
+function onSensorError(e) {
+  sensorFallback = true;
+  log('sensor error: ' + JSON.stringify(e) + ' → 点击兜底');
+  syncHome();
+}
+
 // ---- 生命周期 ----
 function onHide() {
   stopAnim();
@@ -360,8 +376,10 @@ function onHide() {
 }
 function onShow() {
   detector.reset();
-  sensorAdapter.start(onSample, (e) => log('sensor error: ' + JSON.stringify(e) + ' → 点击兜底'));
+  sensorFallback = false;
+  sensorAdapter.start(onSample, onSensorError);
   log('onShow: 重新订阅');
+  syncHome();
 }
 
 let sensorAdapter;
@@ -384,14 +402,12 @@ async function main() {
   sensorAdapter = M['sensor-adapter'].createSensorAdapter(mockSensor);
 
   // 首页交互
-  el('diceArea').onclick = () => controller.trigger('tap');
+  let suppressTapUntil = 0;
+  el('diceArea').onclick = () => {
+    if (Date.now() < suppressTapUntil) return;
+    controller.trigger('tap');
+  };
   el('modeCard').onclick = () => navigate('dice-select');
-  document.querySelectorAll('.util-btn').forEach((b) => {
-    b.onclick = () => navigate(b.getAttribute('data-nav'));
-  });
-  document.querySelectorAll('[data-back]').forEach((b) => {
-    b.onclick = goBack;
-  });
   document.querySelectorAll('[data-nav]').forEach((b) => {
     if (!b.classList.contains('util-btn')) {
       b.onclick = () => navigate(b.getAttribute('data-nav'));
@@ -428,8 +444,19 @@ async function main() {
   };
 
   // 设置页
-  el('tglVibration').onclick = () => store.setSetting('vibration', !store.getState().settings.vibration);
-  el('tglAnimation').onclick = () => store.setSetting('animation', !store.getState().settings.animation);
+  el('settingVibration').onclick = () => store.setSetting('vibration', !store.getState().settings.vibration);
+  el('settingAnimation').onclick = () => store.setSetting('animation', !store.getState().settings.animation);
+
+  // 与真机页面 onswipe 对齐：左滑交给系统返回；首页仅右滑打开功能入口。
+  let swipeStartX = null;
+  el('device').addEventListener('pointerdown', (event) => { swipeStartX = event.clientX; });
+  el('device').addEventListener('pointerup', (event) => {
+    if (stack[stack.length - 1] !== 'home' || controller.isBusy() || swipeStartX === null) return;
+    const dx = event.clientX - swipeStartX;
+    swipeStartX = null;
+    if (Math.abs(dx) >= 60) suppressTapUntil = Date.now() + 350;
+    if (dx >= 60) navigate('dice-select');
+  });
 
   // 时钟
   const updateClock = () => {
@@ -462,7 +489,7 @@ async function main() {
     log('传感器故障注入 ' + (mockSensor.failMode ? '开启' : '关闭'));
     if (mockSensor.failMode) {
       sensorAdapter.stop();
-      sensorAdapter.start(onSample, (e) => log('sensor error: ' + JSON.stringify(e) + ' → 点击兜底'));
+      sensorAdapter.start(onSample, onSensorError);
     } else {
       onShow();
     }

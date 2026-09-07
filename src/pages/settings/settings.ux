@@ -3,25 +3,22 @@
 <template>
   <div class="page">
     <div class="topbar">
-      <div class="nav-back" onclick="goBack">
-        <text class="back-glyph">‹</text>
-      </div>
       <text class="nav-title">设置</text>
       <text class="clock"> </text>
     </div>
 
     <div class="list">
       <!-- 震动反馈 -->
-      <div class="list-item">
+      <div class="list-item" onclick="toggleVibration">
         <text class="item-label">震动反馈</text>
-        <div class="toggle {{ settings.vibration ? 'toggle-on' : 'toggle-off' }}" onclick="toggleVibration">
+        <div class="toggle {{ settings.vibration ? 'toggle-on' : 'toggle-off' }}">
           <div class="toggle-knob"></div>
         </div>
       </div>
       <!-- 动画效果 -->
-      <div class="list-item">
+      <div class="list-item" onclick="toggleAnimation">
         <text class="item-label">动画效果</text>
-        <div class="toggle {{ settings.animation ? 'toggle-on' : 'toggle-off' }}" onclick="toggleAnimation">
+        <div class="toggle {{ settings.animation ? 'toggle-on' : 'toggle-off' }}">
           <div class="toggle-knob"></div>
         </div>
       </div>
@@ -78,9 +75,6 @@ export default {
   },
   goAbout() {
     router.push({ uri: '/pages/about' });
-  },
-  goBack() {
-    router.back();
   },
 };
 </script>

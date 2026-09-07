@@ -32,6 +32,8 @@ module.exports = {
     QUIET_MS: 350,
     // SETTLING 去抖时长
     SETTLING_MS: 200,
+    // 页面恢复订阅后的基线稳定窗口；期间仍允许点击掷骰，但忽略摇动触发
+    STARTUP_STABILIZE_MS: 600,
   },
 
   // 掷骰流程

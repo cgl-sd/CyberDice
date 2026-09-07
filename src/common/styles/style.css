@@ -28,20 +28,6 @@
   color: #9a9ca3;
 }
 
-.nav-back {
-  width: 44px;
-  height: 44px;
-  align-items: center;
-  justify-content: center;
-  margin-left: -10px;
-}
-
-.back-glyph {
-  font-size: 34px;
-  color: #ffffff;
-  margin-top: -4px;
-}
-
 .nav-title {
   font-size: 24px;
   color: #ffffff;
@@ -54,27 +40,6 @@
 }
 
 /* ---- 首页 ---- */
-.util-row {
-  height: 34px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 20px;
-}
-
-.util-btn {
-  width: 34px;
-  height: 34px;
-  align-items: center;
-  justify-content: center;
-  margin-left: 14px;
-}
-
-.util-icon {
-  width: 20px;
-  height: 20px;
-}
-
 .dice-area {
   flex: 1;
   align-items: center;
@@ -120,7 +85,7 @@
 
 .result-sub {
   position: absolute;
-  margin-top: 64px;
+  margin-top: 118px;
   font-size: 20px;
   color: #9a9ca3;
 }

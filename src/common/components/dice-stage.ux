@@ -1,0 +1,29 @@
+<template>
+  <div class="dice-area" onclick="roll">
+    <block if="{{ state === 'RESULT' }}">
+      <div class="result-wrap">
+        <image class="result-ticks" src="/common/images/result-ticks.png"></image>
+        <text class="result-num">{{ resultNum }}</text>
+        <text class="result-sub" show="{{ resultSub !== '' }}">{{ resultSub }}</text>
+      </div>
+    </block>
+    <block if="{{ state !== 'RESULT' }}">
+      <image class="{{ jitter ? 'die-img-shake-l' : 'die-img' }}" src="{{ dieSrc }}"></image>
+    </block>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    state: 'READY',
+    dieSrc: '',
+    jitter: false,
+    resultNum: '',
+    resultSub: '',
+  },
+  roll() {
+    this.$emit('roll');
+  },
+};
+</script>

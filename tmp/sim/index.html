@@ -20,14 +20,8 @@
   .topbar { height: 52px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
   .app-name { font-size: 24px; color: #fff; font-weight: bold; }
   .clock { font-size: 20px; color: #9a9ca3; }
-  .nav-back { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; margin-left: -10px; cursor: pointer; }
-  .back-glyph { font-size: 34px; color: #fff; margin-top: -4px; }
   .nav-title { font-size: 24px; color: #fff; font-weight: bold; flex: 1; }
   .nav-action { font-size: 22px; color: var(--accent); cursor: pointer; }
-
-  .util-row { height: 34px; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; padding: 0 20px; flex-shrink: 0; }
-  .util-btn { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; margin-left: 14px; cursor: pointer; }
-  .util-icon { width: 20px; height: 20px; }
 
   .dice-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; }
   .die-img { width: 148px; height: 148px; }
@@ -36,14 +30,15 @@
   .result-wrap { width: 240px; height: 240px; display: flex; align-items: center; justify-content: center; position: relative; }
   .result-ticks { position: absolute; width: 240px; height: 240px; left: 0; top: 0; }
   .result-num { font-size: 110px; color: #fff; font-weight: bold; }
-  .result-sub { position: absolute; margin-top: 64px; font-size: 20px; color: #9a9ca3; }
+  .result-sub { position: absolute; margin-top: 118px; font-size: 20px; color: #9a9ca3; }
 
   .hint { height: 32px; font-size: 20px; color: #9a9ca3; text-align: center; flex-shrink: 0; }
   .mode-card { height: 56px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; background: #1c1c21; border-radius: 16px; margin: 10px 16px 16px 16px; padding: 0 20px; cursor: pointer; flex-shrink: 0; }
   .mode-card-label { font-size: 24px; color: #fff; font-weight: bold; }
   .mode-card-chevron { font-size: 26px; color: #6f7178; }
 
-  .list { flex: 1; padding: 4px 16px 16px 16px; overflow-y: auto; }
+  .list { flex: 1; padding: 4px 16px 16px 16px; overflow-y: auto; scrollbar-width: none; }
+  .list::-webkit-scrollbar { display: none; width: 0; height: 0; }
   .list-item { height: 60px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; background: #1c1c21; border-radius: 14px; margin-bottom: 10px; padding: 0 20px; cursor: pointer; flex-shrink: 0; box-sizing: border-box; }
   .item-label { font-size: 24px; color: #fff; }
   .item-chevron { font-size: 26px; color: #6f7178; }
@@ -89,10 +84,6 @@
     <!-- 首页 -->
     <div class="screen active" id="scr-home">
       <div class="topbar"><span class="app-name">CyberDice</span><span class="clock" id="clock"></span></div>
-      <div class="util-row">
-        <div class="util-btn" data-nav="history"><img class="util-icon" src="/src/common/images/glyph-clock.png"></div>
-        <div class="util-btn" data-nav="settings"><img class="util-icon" src="/src/common/images/glyph-gear.png"></div>
-      </div>
       <div class="dice-area" id="diceArea">
         <div class="result-wrap" id="resultWrap" style="display:none">
           <img class="result-ticks" src="/src/common/images/result-ticks.png">
@@ -108,11 +99,10 @@
       </div>
     </div>
 
-    <!-- 选择骰子 -->
+    <!-- 右滑后的功能入口：骰子模式、设置、历史均以大行呈现。 -->
     <div class="screen" id="scr-dice-select">
       <div class="topbar">
-        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
-        <span class="nav-title">选择骰子</span><span class="clock">&nbsp;</span>
+        <span class="nav-title">功能入口</span><span class="clock">&nbsp;</span>
       </div>
       <div class="list" id="presetList"></div>
     </div>
@@ -120,7 +110,6 @@
     <!-- 自定义骰子 -->
     <div class="screen" id="scr-custom">
       <div class="topbar">
-        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
         <span class="nav-title">自定义骰子</span><span class="clock">&nbsp;</span>
       </div>
       <div class="list">
@@ -148,7 +137,6 @@
     <!-- 历史记录 -->
     <div class="screen" id="scr-history">
       <div class="topbar">
-        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
         <span class="nav-title">历史记录</span>
         <span class="nav-action" id="clearHistory" style="display:none">清空</span>
         <span class="clock" id="historyClockPad" style="display:none">&nbsp;</span>
@@ -164,15 +152,14 @@
     <!-- 设置 -->
     <div class="screen" id="scr-settings">
       <div class="topbar">
-        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
         <span class="nav-title">设置</span><span class="clock">&nbsp;</span>
       </div>
       <div class="list">
-        <div class="list-item">
+        <div class="list-item" id="settingVibration">
           <span class="item-label">震动反馈</span>
           <div class="toggle" id="tglVibration"><div class="toggle-knob"></div></div>
         </div>
-        <div class="list-item">
+        <div class="list-item" id="settingAnimation">
           <span class="item-label">动画效果</span>
           <div class="toggle" id="tglAnimation"><div class="toggle-knob"></div></div>
         </div>
@@ -188,7 +175,6 @@
     <!-- 主题 -->
     <div class="screen" id="scr-theme">
       <div class="topbar">
-        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
         <span class="nav-title">主题</span><span class="clock">&nbsp;</span>
       </div>
       <div class="list" id="themeList"></div>
@@ -197,7 +183,6 @@
     <!-- 关于 -->
     <div class="screen" id="scr-about">
       <div class="topbar">
-        <div class="nav-back" data-back><span class="back-glyph">‹</span></div>
         <span class="nav-title">关于</span><span class="clock">&nbsp;</span>
       </div>
       <div class="center-box">
@@ -227,6 +212,6 @@
     <div id="log"></div>
   </div>
 
-<script src="app.js?v=16"></script>
+<script src="app.js?v=24"></script>
 </body>
 </html>

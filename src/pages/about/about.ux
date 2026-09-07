@@ -3,9 +3,6 @@
 <template>
   <div class="page">
     <div class="topbar">
-      <div class="nav-back" onclick="goBack">
-        <text class="back-glyph">‹</text>
-      </div>
       <text class="nav-title">关于</text>
       <text class="clock"> </text>
     </div>
@@ -29,8 +26,5 @@ export default {
     version: C.VERSION,
   },
 
-  goBack() {
-    router.back();
-  },
 };
 </script>

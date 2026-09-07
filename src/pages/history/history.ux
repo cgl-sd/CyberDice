@@ -3,9 +3,6 @@
 <template>
   <div class="page">
     <div class="topbar">
-      <div class="nav-back" onclick="goBack">
-        <text class="back-glyph">‹</text>
-      </div>
       <text class="nav-title">历史记录</text>
       <text class="nav-action" show="{{ items.length > 0 }}" onclick="clearAll">清空</text>
       <text class="clock" show="{{ items.length === 0 }}"> </text>
@@ -74,8 +71,5 @@ export default {
     this.app.store.clearHistory();
   },
 
-  goBack() {
-    router.back();
-  },
 };
 </script>

@@ -1,40 +1,21 @@
+<import name="dice-stage" src="../../common/components/dice-stage.ux"></import>
 <style src="../../common/styles/style.css"></style>
 
 <template>
-  <div class="page">
+  <div class="page" onswipe="onSwipe">
     <!-- 顶栏：应用名 + 时钟（概念图·首页） -->
     <div class="topbar">
       <text class="app-name">CyberDice</text>
       <text class="clock">{{ clock }}</text>
     </div>
 
-    <!-- 工具入口：历史 / 设置 -->
-    <div class="util-row">
-      <div class="util-btn" onclick="goHistory">
-        <image class="util-icon" src="/common/images/glyph-clock.png"></image>
-      </div>
-      <div class="util-btn" onclick="goSettings">
-        <image class="util-icon" src="/common/images/glyph-gear.png"></image>
-      </div>
-    </div>
-
     <!-- 主骰子区域：最大点击热区（FR-008） -->
-    <div class="dice-area" onclick="onTapRoll">
-      <block if="{{ rollState === 'RESULT' }}">
-        <div class="result-wrap">
-          <image class="result-ticks" src="/common/images/result-ticks.png"></image>
-          <text class="result-num">{{ resultNum }}</text>
-          <text class="result-sub" show="{{ resultSub !== '' }}">{{ resultSub }}</text>
-        </div>
-      </block>
-      <block if="{{ rollState !== 'RESULT' }}">
-        <image class="{{ jitter ? 'die-img-shake-l' : 'die-img' }}" src="{{ dieSrc }}"></image>
-      </block>
-    </div>
+    <dice-stage state="{{ rollState }}" die-src="{{ dieSrc }}" jitter="{{ jitter }}"
+      result-num="{{ resultNum }}" result-sub="{{ resultSub }}" onroll="onTapRoll"></dice-stage>
 
     <text class="hint">{{ hint }}</text>
 
-    <!-- 底部模式卡片 → 选择骰子 -->
+    <!-- 底部模式卡片 → 功能入口 -->
     <div class="mode-card" onclick="goDiceSelect">
       <text class="mode-card-label">{{ modeLabel }}</text>
       <text class="mode-card-chevron">›</text>
@@ -48,8 +29,8 @@ const diceEngine = require('../../common/scripts/dice-engine.js');
 const sensorAdapterMod = require('../../common/scripts/sensor-adapter.js');
 const router = require('@system.router');
 
-const BLUR_SRC = '/common/images/dice/die-blur.png';
 const dieSrcOf = (v) => '/common/images/dice/die-' + v + '.png';
+const shakeSrcOf = (frame) => '/common/images/dice/shake-' + frame + '.png';
 
 export default {
   data: {
@@ -57,6 +38,7 @@ export default {
     rollState: 'READY',
     dieSrc: dieSrcOf(5),
     jitter: false,
+    sensorFallback: false,
     hint: '摇一摇手腕 或 点击屏幕',
     modeLabel: '1D6',
     resultNum: '',
@@ -80,6 +62,7 @@ export default {
   onShow() {
     // 恢复前台：重置 Detector 并重新订阅传感器（第 14 节）
     this.app.detector.reset();
+    this.sensorFallback = false;
     this.sensor.start(
       (s) => this._onSample(s),
       (e) => this._onSensorError(e)
@@ -117,11 +100,14 @@ export default {
   goDiceSelect() {
     router.push({ uri: '/pages/dice-select' });
   },
-  goHistory() {
-    router.push({ uri: '/pages/history' });
-  },
-  goSettings() {
-    router.push({ uri: '/pages/settings' });
+  onSwipe(event) {
+    if (this.rollState !== C.STATE_READY || !event) {
+      return;
+    }
+    // 左滑保留给系统退出；上下滑在首页不承载功能。
+    if (event.direction === 'right') {
+      router.push({ uri: '/pages/dice-select' });
+    }
   },
 
   // ---- 传感器 ----
@@ -137,7 +123,8 @@ export default {
 
   _onSensorError(err) {
     console.error('sensor fail: ' + JSON.stringify(err));
-    this.hint = '传感器不可用 · 点击掷骰';
+    this.sensorFallback = true;
+    this.syncFromStore();
   },
 
   // ---- 渲染同步 ----
@@ -155,7 +142,7 @@ export default {
         this.resultSub = '';
       } else {
         this.resultNum = String(r.total);
-        this.resultSub = r.dice.join(' + ') + ' = ' + r.total;
+      this.resultSub = r.dice.join(' + ') + ' =';
       }
       this.dieSrc = dieSrcOf(r.dice[0]);
       this.hint = '点击屏幕 或 摇一摇手腕';
@@ -165,7 +152,7 @@ export default {
     } else {
       this._stopAnim();
       this.jitter = false;
-      this.hint = '摇一摇手腕 或 点击屏幕';
+      this.hint = this.sensorFallback ? '传感器不可用 · 点击掷骰' : '摇一摇手腕 或 点击掷骰';
     }
   },
 
@@ -176,14 +163,11 @@ export default {
     if (!this.app.store.getState().settings.animation) {
       return; // 关闭动画效果：保持静态骰面直到结果
     }
-    const mode = this.app.store.getState().mode;
     this._animTimer = setInterval(() => {
       this._tick += 1;
       this.jitter = this._tick % 2 === 0;
-      // 概念图·摇骰动画：模糊帧与随机帧交替
-      this.dieSrc = this._tick % 3 === 1
-        ? BLUR_SRC
-        : dieSrcOf(diceEngine.rollAnimFace(mode)[0] % 6 + 1);
+      // 只切换预渲染残影帧；最终结果仅在 RESULT 进入时由 DiceEngine 生成。
+      this.dieSrc = shakeSrcOf(this._tick % 4 + 1);
     }, C.ANIM_INTERVAL_MS);
   },
 

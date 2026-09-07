@@ -1,14 +1,10 @@
+<import name="page-header" src="../../common/components/page-header.ux"></import>
+<import name="list-row" src="../../common/components/list-row.ux"></import>
 <style src="../../common/styles/style.css"></style>
 
 <template>
   <div class="page">
-    <div class="topbar">
-      <div class="nav-back" onclick="goBack">
-        <text class="back-glyph">‹</text>
-      </div>
-      <text class="nav-title">选择骰子</text>
-      <text class="clock"> </text>
-    </div>
+    <page-header title="功能入口"></page-header>
 
     <div class="list">
       <div class="list-item" for="{{ presets }}" onclick="selectPreset($item)">
@@ -23,6 +19,8 @@
           <text class="check-glyph" show="{{ isCustom }}">✓</text>
         </div>
       </div>
+      <list-row label="偏好设置" chevron="true" onactivate="goSettings"></list-row>
+      <list-row label="历史记录" chevron="true" onactivate="goHistory"></list-row>
     </div>
   </div>
 </template>
@@ -62,8 +60,13 @@ export default {
     router.push({ uri: '/pages/custom' });
   },
 
-  goBack() {
-    router.back();
+  goSettings() {
+    router.push({ uri: '/pages/settings' });
   },
+
+  goHistory() {
+    router.push({ uri: '/pages/history' });
+  },
+
 };
 </script>

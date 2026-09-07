@@ -16,12 +16,15 @@
  *      显著运动，Detector 会重新发出 SHAKE_START，Controller 据此回到 SHAKING。
  */
 
+const C = require('./constants.js');
+
 const SHAKE_DEFAULTS = {
   enterWindowMs: 250,
   enterPeakCount: 3,
   enterThreshold: 3.0,
   baselineAlpha: 0.02,
   quietMs: 350,
+  warmupMs: C.SHAKE.STARTUP_STABILIZE_MS,
 };
 
 function createShakeDetector(config) {
@@ -32,6 +35,7 @@ function createShakeDetector(config) {
   let baseline = null;
   let recentPeaks = []; // 窗口内显著运动样本的时间戳
   let lastMotionAt = 0;
+  let warmupStartedAt = null;
 
   function magnitude(s) {
     return Math.sqrt(s.x * s.x + s.y * s.y + s.z * s.z);
@@ -42,6 +46,7 @@ function createShakeDetector(config) {
     baseline = null;
     recentPeaks = [];
     lastMotionAt = 0;
+    warmupStartedAt = null;
   }
 
   function updateBaseline(m) {
@@ -59,7 +64,15 @@ function createShakeDetector(config) {
   function pushSample(sample) {
     const t = sample.t;
     const m = magnitude(sample);
+    if (warmupStartedAt === null) {
+      warmupStartedAt = t;
+    }
     updateBaseline(m);
+
+    // 订阅刚恢复时，先让 EMA 建立静止基线；防止抬腕打开应用的动作直接掷骰。
+    if (t - warmupStartedAt < cfg.warmupMs) {
+      return null;
+    }
 
     const significant = Math.abs(m - baseline) > cfg.enterThreshold;
 

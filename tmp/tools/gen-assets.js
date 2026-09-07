@@ -1,8 +1,8 @@
 /**
  * CyberDice 资产生成器（依据 UI 概念图）：
  *  - common/images/icon.png            应用图标（深色圆角方块 + 白色 3D 等距骰子）
- *  - common/images/dice/die-{1..6}.png 3D 等距骰子帧（左面为对应点数）
- *  - common/images/dice/die-blur.png   摇动模糊帧
+ *  - common/images/dice/die-{1..6}.png 静止骰子面（2x 输出，左面为对应点数）
+ *  - common/images/dice/shake-{1..4}.png 摇动残影帧（不是最终随机结果）
  *  - common/images/result-ticks.png    结果页蓝色刻度线（中心镂空，叠加大数字）
  *  - common/images/glyph-doc.png       历史空状态文档图形
  *  - common/images/glyph-clock.png / glyph-gear.png  首页入口小图标
@@ -205,13 +205,26 @@ function renderDie(size, values) {
 function genDieFrames() {
   for (let v = 1; v <= 6; v++) {
     // 左面为主点数；右/顶面配面随机感（确定性组合）
-    const frame = renderDie(110, { left: v, right: ((v + 4) % 6) + 1, top: ((v + 2) % 6) + 1 });
+    const frame = renderDie(135, { left: v, right: ((v + 4) % 6) + 1, top: ((v + 2) % 6) + 1 });
     save(frame, path.join(OUT, 'dice', `die-${v}.png`));
   }
-  // 模糊帧：摇动动画用
-  const blurSrc = renderDie(110, { left: 3, right: 5, top: 2 });
-  boxBlur(blurSrc, 4, 3);
-  save(blurSrc, path.join(OUT, 'dice', 'die-blur.png'));
+  // 摇动以半透明相邻姿态构成残影；其数值与最终 DiceEngine 结果完全无关。
+  const phases = [
+    [[-11, 5, 0.20, 2], [7, -4, 0.31, 4], [0, 0, 0.88, 1]],
+    [[9, 4, 0.24, 5], [-8, -5, 0.34, 2], [0, 0, 0.84, 6]],
+    [[-6, -7, 0.28, 3], [11, 3, 0.23, 1], [0, 0, 0.86, 4]],
+    [[8, -6, 0.30, 6], [-10, 4, 0.22, 3], [0, 0, 0.85, 2]],
+  ];
+  phases.forEach((layers, i) => {
+    const out = createCanvas(297, 297);
+    layers.forEach(([dx, dy, opacity, value], layerIndex) => {
+      const die = renderDie(135, { left: value, right: (value % 6) + 1, top: ((value + 2) % 6) + 1 });
+      if (layerIndex < 2) boxBlur(die, 1, 1);
+      for (let p = 3; p < die.data.length; p += 4) die.data[p] *= opacity;
+      composite(out, die, dx, dy);
+    });
+    save(out, path.join(OUT, 'dice', `shake-${i + 1}.png`));
+  });
 }
 
 function genIcon() {
@@ -235,9 +248,8 @@ function genResultTicks() {
   const canvas = createCanvas(S * SS, S * SS);
   const cx = (S * SS) / 2, cy = (S * SS) / 2;
   const ticks = [
-    [12, 96, 128, 26], [38, 104, 122, 20], [65, 98, 118, 30], [95, 108, 130, 18],
-    [128, 100, 120, 24], [158, 96, 126, 28], [192, 104, 124, 20], [222, 98, 118, 30],
-    [252, 100, 122, 22], [288, 106, 128, 18], [322, 96, 118, 26],
+    [18, 104, 130, 26], [62, 98, 128, 30], [108, 104, 130, 24], [153, 96, 126, 32],
+    [198, 104, 130, 24], [242, 98, 128, 30], [288, 104, 130, 26], [333, 96, 126, 32],
   ];
   fill(canvas, (x, y) => {
     for (const [deg, r1, r2, len] of ticks) {

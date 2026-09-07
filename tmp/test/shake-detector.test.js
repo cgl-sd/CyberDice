@@ -28,6 +28,17 @@ test('ShakeDetector: 静止不触发', function () {
   assert.strictEqual(events.length, 0, '静止不应产生事件: ' + JSON.stringify(events));
 });
 
+test('ShakeDetector: 启动稳定窗口内的强运动不触发', function () {
+  const d = mod.createShakeDetector({ warmupMs: 600 });
+  const events = [];
+  for (let i = 0; i < 25; i++) {
+    const m = 9.8 + Math.sin(i * 2.1) * 8;
+    const ev = d.pushSample(sample(i * 20, m));
+    if (ev) events.push(ev);
+  }
+  assert.strictEqual(events.length, 0, '稳定窗口内不应触发: ' + JSON.stringify(events));
+});
+
 test('ShakeDetector: 轻微抬腕/看时间不触发', function () {
   const d = mod.createShakeDetector();
   const samples = [];

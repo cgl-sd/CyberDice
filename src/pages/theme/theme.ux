@@ -3,9 +3,6 @@
 <template>
   <div class="page">
     <div class="topbar">
-      <div class="nav-back" onclick="goBack">
-        <text class="back-glyph">‹</text>
-      </div>
       <text class="nav-title">主题</text>
       <text class="clock"> </text>
     </div>
@@ -59,8 +56,5 @@ export default {
     this.app.store.setSetting('accent', key);
   },
 
-  goBack() {
-    router.back();
-  },
 };
 </script>
